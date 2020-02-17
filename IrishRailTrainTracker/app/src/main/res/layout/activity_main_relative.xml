@@ -17,4 +17,6 @@
         android:layout_below="@id/imageView2"
         android:layout_centerHorizontal="true"
         android:text="@string/check_trains" />
+
+
 </android.widget.RelativeLayout>
