@@ -3,4 +3,9 @@
     <string name="add_page">Add Page</string>
     <string name="logo">Logo</string>
     <string name="check_trains">Check Trains</string>
+    <string name="check_trains_page">Check Trains Page</string>
+    <string name="add_a_journey">Add A Journey</string>
+    <string name="add_journey_page">Add Journey Page</string>
+    <string name="your_journeys">Your Journeys</string>
+    <string name="dark_mode">Dark Mode</string>
 </resources>

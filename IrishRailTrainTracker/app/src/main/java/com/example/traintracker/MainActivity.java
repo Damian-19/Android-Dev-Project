@@ -11,7 +11,7 @@ import android.widget.Button;
 
 public class MainActivity extends Activity {
 
-    Button checkTrains;
+    Button checkTrains, addJourney;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,14 +20,31 @@ public class MainActivity extends Activity {
 
 
         checkTrains = (Button) findViewById(R.id.checkTrains);
+        addJourney = (Button) findViewById(R.id.addJourney);
 
         checkTrains.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                Intent newIntent = new Intent(getApplicationContext(), CheckTrains.class);
-                startActivity(newIntent);
+                Intent checkTrainsIntent = new Intent(getApplicationContext(), CheckTrains.class);
+                startActivity(checkTrainsIntent);
+            }
+        });
+
+        addJourney.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Intent addJourneyIntent = new Intent(getApplicationContext(), AddJourney.class);
+                startActivity(addJourneyIntent);
             }
         });
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
 }
