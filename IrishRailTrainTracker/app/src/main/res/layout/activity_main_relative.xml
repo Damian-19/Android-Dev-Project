@@ -84,7 +84,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text=" Date "
+                android:text="@string/date"
                 android:layout_margin="1dp"
                 android:layout_column="0"
                 android:background="#FFFFFF"
