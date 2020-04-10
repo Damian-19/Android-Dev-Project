@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.widget.RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    android:layout_width="match_parent" android:layout_height="match_parent"
+  >
 
 
     <ImageView
@@ -9,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:contentDescription="@string/logo"
-        android:src="@drawable/logo_placeholder" />
+        android:src="@drawable/logo" />
 
     <Button
         android:id="@+id/checkTrains"
@@ -19,9 +20,7 @@
         android:layout_alignParentStart="true"
         android:layout_marginStart="15dp"
         android:layout_marginEnd="15dp"
-        style="@style/Widget.AppCompat.Button.Colored"
         android:minHeight="60dp"
-        android:background="@drawable/button_corners"
         android:text="@string/check_trains" />
 
     <Space
@@ -36,12 +35,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/checkTrains"
-        style="@style/Widget.AppCompat.Button.Colored"
+        style="@style/Widget.AppCompat.Button"
         android:layout_marginStart="15dp"
         android:layout_marginEnd="15dp"
         android:layout_marginTop="10dp"
         android:minHeight="60dp"
-        android:background="@drawable/button_corners"
         android:text="@string/add_a_journey" />
 
     <TextView
@@ -216,7 +214,7 @@
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
         ads:adSize="BANNER"
-        ads:adUnitId="ca-app-pub-3940256099942544/6300978111">
+        ads:adUnitId="ca-app-pub-9355054563424951/7089580705">
     </com.google.android.gms.ads.AdView>
 
 
