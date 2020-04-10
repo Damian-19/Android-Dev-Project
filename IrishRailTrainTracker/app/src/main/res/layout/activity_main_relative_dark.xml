@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.widget.RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
 
     <ImageView
@@ -198,7 +199,14 @@
         </TableRow>
     </TableLayout>
 
-
+    <TextView
+        android:id="@+id/info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Made by: Damian Larkin \n Student ID: 18230253"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        />
 
     <ImageView
         android:id="@+id/imageView2"
@@ -208,16 +216,5 @@
         android:layout_above="@id/info"
         android:src="@drawable/intercity_map" />
 
-    <com.google.android.gms.ads.AdView
-        xmlns:ads="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/adView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"
-        ads:adSize="BANNER"
-        ads:adUnitId="ca-app-pub-3940256099942544/6300978111">
-    </com.google.android.gms.ads.AdView>
 
-
-</android.widget.RelativeLayout>
+</RelativeLayout>

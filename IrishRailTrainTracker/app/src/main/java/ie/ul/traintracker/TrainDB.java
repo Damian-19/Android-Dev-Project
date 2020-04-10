@@ -1,4 +1,4 @@
-package com.example.traintracker;
+package ie.ul.traintracker;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -34,6 +34,8 @@ public class TrainDB{
         //populate database
         if (getAll().length == 0) {
             this.addRow("Tralee", "Cork", "11:00", "12:30");
+            this.addRow("Dublin", "Limerick", "15:00", "18:00");
+            this.addRow("Kildare", "Cork", "11:00", "12:30");
         }
     }
 
@@ -69,7 +71,9 @@ public class TrainDB{
         db.delete(ModuleDBOpenHelper.DATABASE_TABLE, where, whereArgs);
     }
 
-    // User specific database queries
+    /****************************************
+    * User specific database queries
+     ****************************************/
 
     public String[] getAll() {
         ArrayList<String> outputArray = new ArrayList<String>();
@@ -101,7 +105,7 @@ public class TrainDB{
     }
 
     private static class ModuleDBOpenHelper extends SQLiteOpenHelper {
-        private static final String DATABASE_NAME = "railDatabase.db";
+        private static final String DATABASE_NAME = "TrainDB.db";
         private static final String DATABASE_TABLE = "Trains";
         private static final int DATABASE_VERSION= 1;
 

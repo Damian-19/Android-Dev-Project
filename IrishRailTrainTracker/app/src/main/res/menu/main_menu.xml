@@ -2,5 +2,5 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:title="@string/dark_mode" />
+    <item android:id="@+id/settings" android:title="Settings" />
 </menu>
