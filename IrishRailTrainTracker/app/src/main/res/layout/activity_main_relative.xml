@@ -2,7 +2,7 @@
 <android.widget.RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent" android:layout_height="match_parent"
-  >
+    android:theme="@style/Theme.AppTheme">
 
 
     <ImageView
@@ -12,16 +12,39 @@
         android:contentDescription="@string/logo"
         android:src="@drawable/logo" />
 
+<LinearLayout
+    android:id="@+id/button-layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/spacer"
+    android:orientation="horizontal"
+    android:gravity="center_horizontal|center_vertical"
+    android:weightSum="2">
     <Button
         android:id="@+id/checkTrains"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/spacer"
         android:layout_alignParentStart="true"
         android:layout_marginStart="15dp"
+        android:minHeight="60dp"
+        android:text="@string/check_trains"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Button"
+        android:layout_weight="1"/>
+
+    <Button
+        android:id="@+id/addJourney"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/checkTrains"
         android:layout_marginEnd="15dp"
         android:minHeight="60dp"
-        android:text="@string/check_trains" />
+        android:text="@string/add_a_journey"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Button"
+        android:layout_weight="1"/>
+</LinearLayout>
 
     <Space
         android:id="@+id/spacer"
@@ -30,24 +53,12 @@
         android:layout_below="@id/imageView"
         android:minHeight="20dp" />
 
-    <Button
-        android:id="@+id/addJourney"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/checkTrains"
-        style="@style/Widget.AppCompat.Button"
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp"
-        android:layout_marginTop="10dp"
-        android:minHeight="60dp"
-        android:text="@string/add_a_journey" />
-
     <TextView
         android:id="@+id/journeyHeading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/your_journeys"
-        android:layout_below="@id/spacer1"
+        android:layout_below="@id/button-layout"
         android:layout_marginTop="10dp"
         android:layout_marginStart="10dp"
         android:textSize="20sp"
