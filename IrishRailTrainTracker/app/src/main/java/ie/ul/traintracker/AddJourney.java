@@ -5,12 +5,13 @@ import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.view.View;
 
 public class AddJourney extends Activity {
 
     TextView journeyPage;
     TextView dbView;
-    String[] journeyStart;
+    String[] journeyStart, journeyEnd, departureTime;
     Spinner trainSpinner;
 
     TrainDB trainDB;
@@ -24,7 +25,9 @@ public class AddJourney extends Activity {
         trainDB = new TrainDB(getApplicationContext());
         showFullDatabase();
 
-        journeyStart = trainDB.getAll();
+        journeyEnd = trainDB.getEnd();
+        departureTime = trainDB.getStartTime();
+        journeyStart = trainDB.getStart();
         ArrayAdapter<String> trainAdapter = new ArrayAdapter<String>(getBaseContext(), R.layout.list_item, journeyStart);
         trainAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         trainSpinner.setAdapter(trainAdapter);
