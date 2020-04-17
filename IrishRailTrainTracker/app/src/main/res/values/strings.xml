@@ -9,4 +9,8 @@
     <string name="your_journeys">Your Journeys</string>
     <string name="dark_mode">Dark Mode</string>
     <string name="date">Date</string>
+    <string name="testTitle">Test Notification</string>
+    <string name="testContent">Test Content</string>
+    <string name="channel_name">Test Notification Channel</string>
+    <string name="channel_description">Test Notification Description</string>
 </resources>
