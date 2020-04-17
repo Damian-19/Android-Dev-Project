@@ -15,4 +15,18 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/trainsPage"
         android:text="Send Test Notification"/>
+    <Button
+        android:id="@+id/btnDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvDate"
+        android:text="Schedule Notification"/>
+    <TextView
+        android:id="@+id/tvDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/notification_button"
+        android:hint="Select Date"
+        android:onClick="setDate"
+        android:padding="16dp"/>
 </android.widget.RelativeLayout>

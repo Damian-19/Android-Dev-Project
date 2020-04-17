@@ -3,6 +3,8 @@
     package="ie.ul.traintracker"
     android:versionCode="1"
     android:versionName="1.0">
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <application>
         <meta-data
@@ -21,6 +23,12 @@
         <activity android:name="ie.ul.traintracker.AddJourney"/>
         <activity android:name="ie.ul.traintracker.Settings"
             android:label="Settings"/>
+        <receiver android:name=".DeviceBootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".AlarmReceiver"/>
     </application>
 
 </manifest>
