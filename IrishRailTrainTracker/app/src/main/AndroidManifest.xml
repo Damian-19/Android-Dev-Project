@@ -23,12 +23,9 @@
         <activity android:name="ie.ul.traintracker.AddJourney"/>
         <activity android:name="ie.ul.traintracker.Settings"
             android:label="Settings"/>
-        <receiver android:name=".DeviceBootReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
-            </intent-filter>
-        </receiver>
-        <receiver android:name=".AlarmReceiver"/>
+        <receiver
+            android:name=".AlarmReceiver"
+            android:process=":remote" />
     </application>
 
 </manifest>

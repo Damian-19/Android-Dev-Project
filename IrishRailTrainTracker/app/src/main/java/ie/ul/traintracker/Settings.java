@@ -6,6 +6,8 @@ import android.preference.PreferenceActivity;
 
 public class Settings extends PreferenceActivity {
 
+    public final static String KEY_NAME = "KEY_NAME";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -20,6 +20,7 @@ public class AddJourney extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_journey_relative);
+        journeyPage = (TextView) findViewById(R.id.addJourney);
 
         dbView = (TextView) findViewById(R.id.dbcontent);
         trainDB = new TrainDB(getApplicationContext());
@@ -33,7 +34,7 @@ public class AddJourney extends Activity {
         trainSpinner.setAdapter(trainAdapter);
 
 
-        journeyPage = (TextView) findViewById(R.id.addJourney);
+
     }
 
     private void print(String[] content) {
