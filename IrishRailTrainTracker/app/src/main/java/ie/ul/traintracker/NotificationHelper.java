@@ -15,7 +15,7 @@ import static ie.ul.traintracker.CheckTrains.CONTENT_ID;
 
 public class NotificationHelper extends ContextWrapper {
     public static final String channelID = "channelID";
-    public static final String channelName = "Channel Name";
+    public static final String channelName = "Journey Reminders";
 
 
     private NotificationManager mManager;

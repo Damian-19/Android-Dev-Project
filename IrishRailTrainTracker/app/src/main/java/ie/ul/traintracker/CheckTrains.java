@@ -2,6 +2,7 @@ package ie.ul.traintracker;
 
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -17,6 +18,7 @@ import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -28,26 +30,23 @@ import androidx.fragment.app.FragmentActivity;
 
 import java.text.DateFormat;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
 @SuppressWarnings("deprecation")
-public class CheckTrains extends FragmentActivity {
+public class CheckTrains extends FragmentActivity implements TimePickerDialog.OnTimeSetListener{
 
     public static final String CHANNEL_ID = "1001";
-    private static final String EXTRA_NOTIFICATION_ID = "2";
 
-    final View dialogView = View.inflate(.CheckTrains, R.layout.activity_check_trains_relative);
+
 
     TextView trainsPage, notificationPrompt;
-    TimePicker timePicker;
     TimePickerDialog timePickerDialog;
     Button notificationButton, setDate;
-    OnSharedPreferenceChangeListener prefListener;
     public static String TITLE_ID = "Title";
     public static String CONTENT_ID = "Content";
     final static int RQS_1 = 1;
-    final Calendar myCalendar = Calendar.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +63,21 @@ public class CheckTrains extends FragmentActivity {
         notificationButton = (Button) findViewById(R.id.notification_button);
         notificationPrompt = (TextView) findViewById(R.id.notificationPrompt);
         setDate = (Button) findViewById(R.id.setDate);
+        setDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogFragment timePicker = new TimePickerFragment();
+                timePicker.show(getSupportFragmentManager(), "time picker");
+            }
+        });
+
+        Button buttonCancelAlarm = findViewById(R.id.button_cancel);
+        buttonCancelAlarm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cancelAlarm();
+            }
+        });
 
         setDate.setOnClickListener(new OnClickListener() {
             @Override
@@ -80,59 +94,35 @@ public class CheckTrains extends FragmentActivity {
                 cancelAlarm();
             }
         });
-
-
-
-                notificationButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        sendNotification();
-                        Toast toast = Toast.makeText(getApplicationContext(), "Notification Sent", Toast.LENGTH_SHORT);
-
-                        Intent intent = new Intent(CheckTrains.this, AlarmReceiver.class);
-                        PendingIntent pendingIntent = PendingIntent.getBroadcast(CheckTrains.this, 0, intent, 0);
-                        AlarmManager alarmManager =  (AlarmManager) getSystemService(ALARM_SERVICE);
-
-                        long time = System.currentTimeMillis();
-                        long tenSeconds = 1000 * 10;
-
-                        alarmManager.set(AlarmManager.RTC_WAKEUP,
-                                time + tenSeconds,
-                                pendingIntent);
-
-                    }
-                });
-
     }
 
-    public void onTimeSet(TimePicker view, int hourOfDay, int minute, int dayOfMonth, int month, int year) {
-        Calendar calendar = Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault());
+    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        c.set(Calendar.MINUTE, minute);
+        c.set(Calendar.SECOND, 0);
 
-        calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-        calendar.set(Calendar.MONTH, month);
-        calendar.set(Calendar.YEAR, year);
-
-        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-        calendar.set(Calendar.MINUTE, minute);
-        calendar.set(Calendar.SECOND, 0);
-
-        updateTimeText(calendar);
-        startAlarm(calendar);
+        updateTimeText(c);
+        startAlarm(c);
     }
 
-    private void updateTimeText(Calendar calendar) {
+    private void updateTimeText(Calendar c) {
         String timeText = "Alarm set for: ";
-        timeText += DateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.getTime());
+        timeText += DateFormat.getTimeInstance(DateFormat.SHORT).format(c.getTime());
 
         setDate.setText(timeText);
     }
 
-    private void startAlarm(Calendar calendar) {
+    private void startAlarm(Calendar c) {
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, AlarmReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
 
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+        if (c.before(Calendar.getInstance())) {
+            c.add(Calendar.DATE, 1);
+        }
+
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
     }
 
     private void cancelAlarm() {
@@ -141,49 +131,7 @@ public class CheckTrains extends FragmentActivity {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
 
         alarmManager.cancel(pendingIntent);
-        setDate.setText("Alarm Cancelled");
-    }
-
-    private void openTimePickerDialog(boolean is24r) {
-        Calendar calendar = Calendar.getInstance();
-
-        timePickerDialog = new TimePickerDialog(
-                this,
-                onTimeSetListener,
-                calendar.get(Calendar.HOUR_OF_DAY),
-                calendar.get(Calendar.MINUTE),
-                is24r);
-        timePickerDialog.setTitle("Set Journey Departure Time");
-        timePickerDialog.show();
-    }
-
-    OnTimeSetListener onTimeSetListener = new OnTimeSetListener() {
-        @Override
-        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-            Calendar calNow = Calendar.getInstance();
-            Calendar calSet = (Calendar) calNow.clone();
-
-            calSet.set(Calendar.HOUR_OF_DAY, hourOfDay);
-            calSet.set(Calendar.MINUTE, minute);
-            calSet.set(Calendar.SECOND, 0);
-            calSet.set(Calendar.MILLISECOND, 0);
-
-            if(calSet.compareTo(calNow) <= 0) {
-                calSet.add(Calendar.DATE, 1);
-            }
-            setAlarm(calSet);
-        }};
-
-    private void setAlarm(Calendar targetCal) {
-        notificationPrompt.setText(
-                "\n\n***\n"
-                + "Your journey has been added, departing at " + targetCal.getTime() + "\n"
-                + "***\n");
-
-        Intent intent = new Intent(getBaseContext(), AlarmReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getBaseContext(), RQS_1, intent, 0);
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, targetCal.getTimeInMillis(), pendingIntent);
+        setDate.setText("Alarm canceled");
     }
 
     private void updateFromPreferences(SharedPreferences prefs) {
@@ -194,49 +142,6 @@ public class CheckTrains extends FragmentActivity {
             TITLE_ID = ("Journey Reminder");
         }
     }
-
-    /*public static void scheduleNotification(Context context, long time) {
-        Intent intent = new Intent(context, AlarmReceiver.class);
-        intent.putExtra("title", TITLE_ID);
-        intent.putExtra("text", CONTENT_ID);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        //Schedule notification
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, time, pendingIntent);
-    }
-
-    public static void cancelNotification(Context context) {
-        Intent intent = new Intent(context, AlarmReceiver.class);
-        intent.putExtra("title", TITLE_ID);
-        intent.putExtra("content", CONTENT_ID);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        //Cancel notification
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.cancel(pendingIntent);
-    }
-
-
-    DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
-        @Override
-        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-            myCalendar.set(Calendar.YEAR, year);
-            myCalendar.set(Calendar.MONTH, monthOfYear);
-            myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-        }
-    };
-
-    public void setDate(View view) {
-        new DatePickerDialog(
-                CheckTrains.this, date,
-                myCalendar.get(Calendar.YEAR),
-                myCalendar.get(Calendar.MONTH),
-                myCalendar.get(Calendar.DAY_OF_MONTH)
-        ).show();
-    }*/
-
-
 
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
