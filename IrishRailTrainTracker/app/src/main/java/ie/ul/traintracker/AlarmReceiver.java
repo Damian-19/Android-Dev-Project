@@ -22,34 +22,8 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        //Build notification
-        /*Notification notification = new NotificationCompat.Builder(context)
-                .setContentTitle(TITLE_ID)
-                .setContentText(CONTENT_ID)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setAutoCancel(true)
-                .build();*/
-
-
-        //Send notification
-        //NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        //manager.notify(RQS_1, notification);
+        NotificationHelper notificationHelper = new NotificationHelper(context);
+        NotificationCompat.Builder builder = notificationHelper.getChannelNotification();
+        notificationHelper.getManager().notify(1, builder.build());
     }
-
-   /* public void sendNotification() {
-
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.drawable.logo)
-                .setContentTitle(TITLE_ID)
-                .setContentText(CONTENT_ID)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setContentIntent(pendingIntent)
-                .setFullScreenIntent(fullScreenPendingIntent, true)
-                .setCategory(NotificationCompat.CATEGORY_REMINDER)
-                .setAutoCancel(true);
-
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-        notificationManager.notify(1, builder.build());
-    }*/
 }

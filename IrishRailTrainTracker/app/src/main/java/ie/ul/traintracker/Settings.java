@@ -20,15 +20,7 @@ public class Settings extends PreferenceActivity {
         addPreferencesFromResource(R.xml.preference_settings);
 
         ToggleButton toggleButton = (ToggleButton) findViewById(R.id.dark_mode);
-        toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                } else {
 
-                }
-            }
-        });
 
 
 

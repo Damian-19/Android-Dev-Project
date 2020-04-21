@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -22,18 +23,25 @@ import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 
+import org.w3c.dom.Text;
+
 import java.util.Calendar;
 
+@SuppressWarnings("deprecation")
 public class MainActivity extends Activity {
     private AdView mAdView;
 
     Button checkTrains, addJourney;
+    TextView welcomeText;
     OnSharedPreferenceChangeListener prefListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_relative);
+
+        SharedPreferences myPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+
 
         boolean alarm = (PendingIntent.getBroadcast(this, 0, new Intent("ALARM"), PendingIntent.FLAG_NO_CREATE) == null);
 
@@ -43,8 +51,8 @@ public class MainActivity extends Activity {
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(System.currentTimeMillis());
             calendar.add(Calendar.SECOND, 3);
-            AlarmManager alarme = (AlarmManager) getSystemService(ALARM_SERVICE);
-            alarme.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 60000, pendingIntent);
+            AlarmManager alarm1 = (AlarmManager) getSystemService(ALARM_SERVICE);
+            alarm1.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 60000, pendingIntent);
         }
 
         MobileAds.initialize(this, new OnInitializationCompleteListener() {
@@ -59,13 +67,14 @@ public class MainActivity extends Activity {
 
         checkTrains = (Button) findViewById(R.id.checkTrains);
         addJourney = (Button) findViewById(R.id.addJourney);
+        welcomeText = (TextView) findViewById(R.id.welcome_text);
+        updateFromPreferences(myPrefs);
 
         checkTrains.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                Intent checkTrainsIntent = new Intent(getApplicationContext(), CheckTrains.class);
-                startActivity(checkTrainsIntent);
+                navigateToView(CheckTrains.class);
             }
         });
 
@@ -73,10 +82,19 @@ public class MainActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-                Intent addJourneyIntent = new Intent(getApplicationContext(), AddJourney.class);
-                startActivity(addJourneyIntent);
+                navigateToView(AddJourney.class);
             }
         });
+    }
+
+    //Update welcome text from sharedPreferences
+    private void updateFromPreferences(SharedPreferences prefs) {
+        String name = prefs.getString(Settings.KEY_NAME, "");
+        if (!name.contentEquals("")) {
+            welcomeText.setText("Welcome back, " + name + ".");
+        } else {
+            welcomeText.setText("Welcome back.");
+        }
     }
 
     @Override
@@ -85,17 +103,33 @@ public class MainActivity extends Activity {
         return true;
     }
 
+    //Menu option to open the settings page
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
             case R.id.settings:
-                Intent settingsIntent = new Intent(getBaseContext(), ie.ul.traintracker.Settings.class);
-                startActivity(settingsIntent);
+                navigateToView(Settings.class);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    //Replaces the need for seperate intents in every button listener
+    private void navigateToView(Class viewName) {
+        Intent intent = new Intent(getBaseContext(), viewName);
+        startActivity(intent);
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        //Checks sharedPreferences again for a name change
+        SharedPreferences myPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        updateFromPreferences(myPrefs);
+    }
+
+
 
 
 

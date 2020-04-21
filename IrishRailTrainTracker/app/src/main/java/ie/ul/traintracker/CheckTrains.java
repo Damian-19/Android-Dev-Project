@@ -23,23 +23,27 @@ import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentActivity;
 
+import java.text.DateFormat;
 import java.util.Calendar;
+import java.util.Locale;
+import java.util.TimeZone;
 
 @SuppressWarnings("deprecation")
-public class CheckTrains extends Activity {
+public class CheckTrains extends FragmentActivity {
 
     public static final String CHANNEL_ID = "1001";
     private static final String EXTRA_NOTIFICATION_ID = "2";
 
+    final View dialogView = View.inflate(.CheckTrains, R.layout.activity_check_trains_relative);
+
     TextView trainsPage, notificationPrompt;
     TimePicker timePicker;
     TimePickerDialog timePickerDialog;
-    Button notificationButton, setTime;
-    String title;
+    Button notificationButton, setDate;
     OnSharedPreferenceChangeListener prefListener;
-    CharSequence testTitle = "Journey Reminder";
-    CharSequence testContent = "You have a journey today";
     public static String TITLE_ID = "Title";
     public static String CONTENT_ID = "Content";
     final static int RQS_1 = 1;
@@ -59,24 +63,85 @@ public class CheckTrains extends Activity {
         trainsPage = (TextView) findViewById(R.id.trainsPage);
         notificationButton = (Button) findViewById(R.id.notification_button);
         notificationPrompt = (TextView) findViewById(R.id.notificationPrompt);
-        setTime = (Button) findViewById(R.id.setDate);
+        setDate = (Button) findViewById(R.id.setDate);
 
-        setTime.setOnClickListener(new OnClickListener() {
+        setDate.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                notificationPrompt.setText("");
-                openTimePickerDialog(false);
+                DialogFragment dialogFragment = new TimePickerFragment();
+                dialogFragment.show(getSupportFragmentManager(), "timePicker");
             }
         });
+
+        Button buttonCancel = findViewById(R.id.button_cancel);
+        buttonCancel.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cancelAlarm();
+            }
+        });
+
+
 
                 notificationButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         sendNotification();
                         Toast toast = Toast.makeText(getApplicationContext(), "Notification Sent", Toast.LENGTH_SHORT);
+
+                        Intent intent = new Intent(CheckTrains.this, AlarmReceiver.class);
+                        PendingIntent pendingIntent = PendingIntent.getBroadcast(CheckTrains.this, 0, intent, 0);
+                        AlarmManager alarmManager =  (AlarmManager) getSystemService(ALARM_SERVICE);
+
+                        long time = System.currentTimeMillis();
+                        long tenSeconds = 1000 * 10;
+
+                        alarmManager.set(AlarmManager.RTC_WAKEUP,
+                                time + tenSeconds,
+                                pendingIntent);
+
                     }
                 });
 
+    }
+
+    public void onTimeSet(TimePicker view, int hourOfDay, int minute, int dayOfMonth, int month, int year) {
+        Calendar calendar = Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault());
+
+        calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        calendar.set(Calendar.MONTH, month);
+        calendar.set(Calendar.YEAR, year);
+
+        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        calendar.set(Calendar.MINUTE, minute);
+        calendar.set(Calendar.SECOND, 0);
+
+        updateTimeText(calendar);
+        startAlarm(calendar);
+    }
+
+    private void updateTimeText(Calendar calendar) {
+        String timeText = "Alarm set for: ";
+        timeText += DateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.getTime());
+
+        setDate.setText(timeText);
+    }
+
+    private void startAlarm(Calendar calendar) {
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
+
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+    }
+
+    private void cancelAlarm() {
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
+
+        alarmManager.cancel(pendingIntent);
+        setDate.setText("Alarm Cancelled");
     }
 
     private void openTimePickerDialog(boolean is24r) {

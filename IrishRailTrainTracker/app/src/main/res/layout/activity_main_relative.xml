@@ -11,12 +11,19 @@
         android:layout_height="wrap_content"
         android:contentDescription="@string/logo"
         android:src="@drawable/logo" />
+    <TextView
+        android:id="@+id/welcome_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/imageView"
+        android:text="@string/welcome_back"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"/>
 
 <LinearLayout
     android:id="@+id/button-layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_below="@id/spacer"
+    android:layout_below="@id/spacer2"
     android:orientation="horizontal"
     android:gravity="center_horizontal|center_vertical"
     android:weightSum="2">
@@ -51,6 +58,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/imageView"
+        android:minHeight="20dp" />
+    <Space
+        android:id="@+id/spacer2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/welcome_text"
         android:minHeight="20dp" />
 
     <TextView
@@ -208,14 +221,6 @@
     </TableLayout>
 
 
-
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/journeyTable"
-        android:layout_above="@id/info"
-        android:src="@drawable/intercity_map" />
 
     <com.google.android.gms.ads.AdView
         xmlns:ads="http://schemas.android.com/apk/res-auto"
