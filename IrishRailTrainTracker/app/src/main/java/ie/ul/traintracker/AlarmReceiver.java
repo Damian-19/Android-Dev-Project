@@ -11,10 +11,10 @@ import android.content.Intent;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
-import static ie.ul.traintracker.CheckTrains.CHANNEL_ID;
-import static ie.ul.traintracker.CheckTrains.RQS_1;
-import static ie.ul.traintracker.CheckTrains.TITLE_ID;
-import static ie.ul.traintracker.CheckTrains.CONTENT_ID;
+import static ie.ul.traintracker.AddJourney.CHANNEL_ID;
+import static ie.ul.traintracker.AddJourney.RQS_1;
+import static ie.ul.traintracker.AddJourney.TITLE_ID;
+import static ie.ul.traintracker.AddJourney.CONTENT_ID;
 
 @SuppressWarnings("deprecation")
 public class AlarmReceiver extends BroadcastReceiver {

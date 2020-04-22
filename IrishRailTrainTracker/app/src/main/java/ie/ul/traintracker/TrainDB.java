@@ -136,6 +136,38 @@ public class TrainDB{
             result = cursor.moveToNext();
         }
         return outputArray.toArray(new String[outputArray.size()]);
+
+
+    }
+
+    public String[] getJourney(String journeyStartLocation, String journeyDepartureTime) {
+        ArrayList<String> outputArray = new ArrayList<String>();
+        String[] result_columns = new String[]{
+                KEY_DEPARTURE_TIME, KEY_JOURNEY_END, KEY_JOURNEY_START};
+
+        String journeyStart, journeyEnd, departureTime;
+
+        String where = KEY_JOURNEY_START + "= ? AND " + KEY_JOURNEY_END + "= ?";
+        String whereArgs[] = {journeyStartLocation.toString(), journeyDepartureTime.toString()};
+        String groupBy = null;
+        String having = null;
+        String order = null;
+
+        SQLiteDatabase db = moduleDBOpenHelper.getWritableDatabase();
+        Cursor cursor = db.query(ModuleDBOpenHelper.DATABASE_TABLE,
+                result_columns, where, whereArgs, groupBy, having, order);
+
+        boolean result = cursor.moveToFirst();
+        while (result) {
+            journeyStart = cursor.getString(cursor.getColumnIndex(KEY_JOURNEY_START));
+            journeyEnd = cursor.getString(cursor.getColumnIndex(KEY_JOURNEY_END));
+            departureTime = cursor.getString(cursor.getColumnIndex(KEY_DEPARTURE_TIME));
+
+            outputArray.add(departureTime + " " + "from" + " " + journeyStart + " " + "to" + " " + journeyEnd);
+            result = cursor.moveToNext();
+        }
+        return outputArray.toArray(new String[outputArray.size()]);
+
     }
 
     public String[] getEnd() {
@@ -186,7 +218,7 @@ public class TrainDB{
 
         boolean result = cursor.moveToFirst();
         while (result) {
-            departureTime = cursor.getString(cursor.getColumnIndex(KEY_JOURNEY_END));
+            departureTime = cursor.getString(cursor.getColumnIndex(KEY_DEPARTURE_TIME));
 
             outputArray.add(departureTime);
             result = cursor.moveToNext();
@@ -197,14 +229,14 @@ public class TrainDB{
     private static class ModuleDBOpenHelper extends SQLiteOpenHelper {
         private static final String DATABASE_NAME = "TrainDB.db";
         private static final String DATABASE_TABLE = "Trains";
-        private static final int DATABASE_VERSION= 2;
+        private static final int DATABASE_VERSION= 3;
 
         // create database
         private static final String DATABASE_CREATE = " create table " +
                 DATABASE_TABLE + " (" + KEY_ID +
                 " integer primary key autoincrement, " +
-                KEY_JOURNEY_START + " text not null, " +
-                KEY_JOURNEY_END +  "text not null, " +
+                KEY_JOURNEY_START + " text not null collate nocase, " +
+                KEY_JOURNEY_END +  " text not null collate nocase, " +
                 KEY_DEPARTURE_TIME + " text not null);";
 
         public ModuleDBOpenHelper(Context context, String name, CursorFactory factory, int version) {
@@ -213,7 +245,9 @@ public class TrainDB{
 
         // called to create database when none exists
         @Override
-        public void onCreate(SQLiteDatabase db) {db.execSQL(DATABASE_CREATE);}
+        public void onCreate(SQLiteDatabase db) {
+            db.execSQL(DATABASE_CREATE);
+        }
 
         // called when database version does not match
         // version on disk updated to current version

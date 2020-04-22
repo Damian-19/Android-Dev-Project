@@ -1,38 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.widget.RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent"
-    android:theme="@style/Theme.AppCompat.Light">
+    android:layout_width="match_parent" android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/trainsPage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="@string/check_trains_page" />
-    <Button
-        android:id="@+id/notification_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/trainsPage"
-        android:text="Send Test Notification"/>
-    <Button
-        android:id="@+id/setDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/notification_button"
-        android:text="Schedule Notification"/>
-    <TextView
-        android:id="@+id/notificationPrompt"
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/setDate"
-        android:hint="Select Date"
-        android:padding="16dp"/>
-    <Button
-        android:id="@+id/button_cancel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Cancel Alarm"
-        android:layout_below="@id/notificationPrompt"/>
+        android:layout_height="wrap_content" >
 
+        <Spinner
+            android:id="@+id/start_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/dbcontent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentBottom="true" />
+
+        <LinearLayout
+            android:id="@+id/findpricecontainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/start_spinner" >
+
+            <TextView
+                android:id="@+id/findJourneyStartFrom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/find_journey_start_from" />
+
+            <EditText
+                android:id="@+id/chosenStartStation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="10"
+                android:ems="10"
+                android:inputType="text" />
+
+            <EditText
+                android:id="@+id/chosenDepartureTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="10"
+                android:ems="10"
+                android:inputType="text" />
+
+            <Button
+                android:id="@+id/findStartStationsButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/search" />
+
+        </LinearLayout>
+    </RelativeLayout>
 </android.widget.RelativeLayout>

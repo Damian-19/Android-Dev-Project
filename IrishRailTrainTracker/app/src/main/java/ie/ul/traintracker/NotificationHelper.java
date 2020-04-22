@@ -9,8 +9,8 @@ import android.os.Build;
 
 import androidx.core.app.NotificationCompat;
 
-import static ie.ul.traintracker.CheckTrains.TITLE_ID;
-import static ie.ul.traintracker.CheckTrains.CONTENT_ID;
+import static ie.ul.traintracker.AddJourney.TITLE_ID;
+import static ie.ul.traintracker.AddJourney.CONTENT_ID;
 
 
 public class NotificationHelper extends ContextWrapper {
