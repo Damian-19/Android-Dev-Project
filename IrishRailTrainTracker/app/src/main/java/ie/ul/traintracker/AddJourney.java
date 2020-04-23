@@ -42,12 +42,14 @@ public class AddJourney extends FragmentActivity implements TimePickerDialog.OnT
 
 
 
-    TextView trainsPage, notificationPrompt;
+    TextView trainsPage, notificationPrompt, tableView;
     TimePickerDialog timePickerDialog;
     Button notificationButton, setDate;
     public static String TITLE_ID = "Title";
     public static String CONTENT_ID = "Content";
     final static int RQS_1 = 1;
+
+    TrainDB trainDB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,12 +59,13 @@ public class AddJourney extends FragmentActivity implements TimePickerDialog.OnT
     SharedPreferences myPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
     updateFromPreferences(myPrefs);
 
-    //Notification
     createNotificationChannel();
 
     trainsPage = (TextView) findViewById(R.id.trainsPage);
+    trainDB = new TrainDB(getApplicationContext());
     notificationButton = (Button) findViewById(R.id.notification_button);
     notificationPrompt = (TextView) findViewById(R.id.notificationPrompt);
+    tableView = (TextView) findViewById(R.id.tableView);
     setDate = (Button) findViewById(R.id.setDate);
         setDate.setOnClickListener(new View.OnClickListener() {
         @Override
@@ -95,6 +98,8 @@ public class AddJourney extends FragmentActivity implements TimePickerDialog.OnT
             cancelAlarm();
         }
     });
+
+        showFullTable();
 }
 
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
@@ -176,6 +181,17 @@ public class AddJourney extends FragmentActivity implements TimePickerDialog.OnT
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
         notificationManager.notify(1, builder.build());
+    }
+
+    private void print(String[] content) {
+        tableView.setText("");
+        for (int i=0; i<content.length; i++) {
+            tableView.append(content[i]+"\n");
+        }
+    }
+
+    private void showFullTable() {
+        print(trainDB.getAllCustom());
     }
 
 

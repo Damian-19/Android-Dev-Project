@@ -61,7 +61,7 @@ public class CheckTrains extends Activity {
         searchStartButton = (Button) findViewById(R.id.findStartStationsButton);
         chosenStartStationField = (EditText) findViewById(R.id.chosenStartStation);
         chosenDepartureTime = (EditText) findViewById(R.id.chosenDepartureStation);
-        showFullDatabase();
+        showFullTable();
 
         journeyEnd = trainDB.getEnd();
         departureTime = trainDB.getStartTime();
@@ -92,8 +92,8 @@ public class CheckTrains extends Activity {
         }
     }
 
-    private void showFullDatabase() {
-        print(trainDB.getAll());
+    private void showFullTable() {
+        print(trainDB.getAllTimetable());
     }
 
     private void showStartStationSearch(String journeyStartLocation, String journeyDepartureTime) {

@@ -38,17 +38,18 @@ public class TrainDB{
                 ModuleDBOpenHelper.DATABASE_VERSION);
 
         //populate database
-        if (getAll().length == 0) {
-            this.addRow("Tralee", "Cork", "11:00");
-            this.addRow("Dublin", "Limerick", "15:00");
-            this.addRow("Limerick", "Cork", "13:00");
-            this.addRow("Newbridge", "Mallow", "10:00");
-            this.addRow("Kildare", "Dublin", "16:00");
-            this.addRow("Athlone", "Thurles", "11:00");
-            this.addRow("Galway", "Tralee", "18:00");
-            this.addRow("Killarney", "Cork", "09:00");
-            this.addRow("Westport", "Sligo", "15:00");
-            this.addRow("Carlow", "Waterford", "17:00");
+        if (getAllTimetable().length == 0 || getAllCustom().length == 0) {
+            this.addRowTimetable("Tralee", "Cork", "11:00");
+            this.addRowTimetable("Dublin", "Limerick", "15:00");
+            this.addRowTimetable("Limerick", "Cork", "13:00");
+            this.addRowTimetable("Newbridge", "Mallow", "10:00");
+            this.addRowTimetable("Kildare", "Dublin", "16:00");
+            this.addRowTimetable("Athlone", "Thurles", "11:00");
+            this.addRowTimetable("Galway", "Tralee", "18:00");
+            this.addRowTimetable("Killarney", "Cork", "09:00");
+            this.addRowTimetable("Westport", "Sligo", "15:00");
+            this.addRowTimetable("Carlow", "Waterford", "17:00");
+            this.addRowCustomJourney("Tralee", "Cork", "14:00");
         }
     }
 
@@ -59,7 +60,7 @@ public class TrainDB{
         moduleDBOpenHelper.close();
     }
 
-    public void addRow(String journeyStart, String journeyEnd, String departureTime) {
+    public void addRowTimetable(String journeyStart, String journeyEnd, String departureTime) {
         // create new row of values
         ContentValues newValues = new ContentValues();
 
@@ -71,6 +72,17 @@ public class TrainDB{
         // insert row into table
         SQLiteDatabase db = moduleDBOpenHelper.getWritableDatabase();
         db.insert(ModuleDBOpenHelper.TIMETABLE_TABLE, null, newValues);
+    }
+
+    public void addRowCustomJourney(String customJourneyStartLocation, String customJourneyEndLocation, String customDepartureTime) {
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(KEY_CUSTOM_JOURNEY_START_LOCATION, customJourneyStartLocation);
+        contentValues.put(KEY_CUSTOM_JOURNEY_END_LOCATION, customJourneyEndLocation);
+        contentValues.put(KEY_CUSTOM_DEPARTURE_TIME, customDepartureTime);
+
+        SQLiteDatabase db = moduleDBOpenHelper.getWritableDatabase();
+        db.insert(ModuleDBOpenHelper.CUSTOM_JOURNEY_TABLE, null, contentValues);
     }
 
     public void deleteRow(int idNr) {
@@ -95,7 +107,7 @@ public class TrainDB{
     * User specific database queries
      ****************************************/
 
-    public String[] getAll() {
+    public String[] getAllTimetable() {
         ArrayList<String> outputArray = new ArrayList<String>();
         String[] result_columns = new String[]{
                 KEY_JOURNEY_START, KEY_JOURNEY_END, KEY_DEPARTURE_TIME};
@@ -118,6 +130,34 @@ public class TrainDB{
             departureTime = cursor.getString(cursor.getColumnIndex(KEY_DEPARTURE_TIME));
 
             outputArray.add(departureTime + " " + "from" + " " + journeyStart + " " + "to" + " " + journeyEnd);
+            result = cursor.moveToNext();
+        }
+        return outputArray.toArray(new String[outputArray.size()]);
+    }
+
+    public String[] getAllCustom() {
+        ArrayList<String> outputArray = new ArrayList<String>();
+        String[] result_columns = new String[]{
+                KEY_CUSTOM_JOURNEY_START_LOCATION, KEY_CUSTOM_JOURNEY_END_LOCATION, KEY_CUSTOM_DEPARTURE_TIME};
+
+        String customJourneyStart, customJourneyEnd, customDepartureTime;
+        String where = null;
+        String whereArgs[] = null;
+        String groupBy = null;
+        String having = null;
+        String order = null;
+
+        SQLiteDatabase db = moduleDBOpenHelper.getWritableDatabase();
+        Cursor cursor = db.query(ModuleDBOpenHelper.CUSTOM_JOURNEY_TABLE, result_columns, where, whereArgs, groupBy, having, order);
+
+        boolean result = cursor.moveToFirst();
+        while (result) {
+
+            customJourneyStart = cursor.getString(cursor.getColumnIndex(KEY_CUSTOM_JOURNEY_START_LOCATION));
+            customJourneyEnd = cursor.getString(cursor.getColumnIndex(KEY_CUSTOM_JOURNEY_END_LOCATION));
+            customDepartureTime = cursor.getString(cursor.getColumnIndex(KEY_CUSTOM_DEPARTURE_TIME));
+
+            outputArray.add(customDepartureTime + " " + "from" + " " + customJourneyStart + " " + "to" + " " + customJourneyEnd);
             result = cursor.moveToNext();
         }
         return outputArray.toArray(new String[outputArray.size()]);
@@ -243,17 +283,17 @@ public class TrainDB{
         private static final String DATABASE_NAME = "TrainDB.db";
         private static final String TIMETABLE_TABLE = "Trains";
         private static final String CUSTOM_JOURNEY_TABLE = "Journeys";
-        private static final int DATABASE_VERSION= 4;
+        private static final int DATABASE_VERSION= 8;
 
         // create database
-        private static final String DATABASE_CREATE = " create table " +
+        private static final String TIMETABLE_CREATE = "create table " +
                 TIMETABLE_TABLE + " (" + KEY_ID +
                 " integer primary key autoincrement, " +
                 KEY_JOURNEY_START + " text not null collate nocase, " +
                 KEY_JOURNEY_END +  " text not null collate nocase, " +
-                KEY_DEPARTURE_TIME + " text not null);" +
+                KEY_DEPARTURE_TIME + " text not null);";
 
-        " create table " +
+        private static final String CUSTOM_JOURNEY_CREATE = "create table " +
                 CUSTOM_JOURNEY_TABLE + " (" + KEY_ID +
                 " integer primary key autoincrement, " +
                 KEY_CUSTOM_JOURNEY_START_LOCATION + " text not null collate nocase, " +
@@ -269,8 +309,8 @@ public class TrainDB{
         @Override
         public void onCreate(SQLiteDatabase db) {
 
-            db.execSQL(TIMETABLE_TABLE);
-            db.execSQL(CUSTOM_JOURNEY_TABLE);
+            db.execSQL(TIMETABLE_CREATE);
+            db.execSQL(CUSTOM_JOURNEY_CREATE);
         }
 
         // called when database version does not match
@@ -284,6 +324,7 @@ public class TrainDB{
 
             // update to conform to new version
             db.execSQL("DROP TABLE IF EXISTS " + TIMETABLE_TABLE);
+            db.execSQL("DROP TABLE IF EXISTS " + CUSTOM_JOURNEY_TABLE);
             onCreate(db);
         }
     }
