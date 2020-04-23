@@ -29,10 +29,81 @@
         android:text="Cancel Alarm"
         android:layout_below="@id/notificationPrompt"/>
 
+    <Space
+        android:id="@+id/spacer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/button_cancel"/>
+    <LinearLayout
+        android:id="@+id/addCustomJourneyContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/spacer" >
+        <TextView
+            android:id="@+id/addCustomJourneyStartText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Journey Start: " />
+
+        <EditText
+            android:id="@+id/addCustomJourneyStartInput"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="10"
+            android:ems="10"
+            android:inputType="text" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/addCustomJourneyContainer1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/addCustomJourneyContainer" >
+        <TextView
+            android:id="@+id/addCustomJourneyEndText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Journey End: " />
+
+        <EditText
+            android:id="@+id/addCustomJourneyEndInput"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="10"
+            android:ems="10"
+            android:inputType="text" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/addCustomJourneyContainer2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@id/addCustomJourneyContainer1"
+        android:layout_centerVertical="true">
+
+        <Button
+            android:id="@+id/timePickerButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Set Departure Time"/>
+
+        <Button
+            android:id="@+id/addCustomJourneyButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/add_journey" />
+
+    </LinearLayout>
+
+
     <TextView
         android:id="@+id/tableView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/button_cancel" />
+        android:freezesText="true"
+        android:layout_alignParentBottom="true"/>
 
 </android.widget.RelativeLayout>

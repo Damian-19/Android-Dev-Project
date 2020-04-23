@@ -17,4 +17,5 @@
     <string name="find_journey_start_from">Start Station: </string>
     <string name="search">Search</string>
     <string name="find_journey_end">"End Station: "</string>
+    <string name="add_journey">Add Journey</string>
 </resources>

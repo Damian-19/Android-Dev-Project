@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -29,9 +30,11 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Locale;
+import java.util.SimpleTimeZone;
 import java.util.TimeZone;
 
 @SuppressWarnings("deprecation")
@@ -41,10 +44,11 @@ public class AddJourney extends FragmentActivity implements TimePickerDialog.OnT
     public static final String CHANNEL_ID = "1001";
 
 
-
-    TextView trainsPage, notificationPrompt, tableView;
+    TextView trainsPage, notificationPrompt, tableView, timePicked;
+    EditText addCustomStartLocation, addCustomEndLocation;
     TimePickerDialog timePickerDialog;
-    Button notificationButton, setDate;
+    TimePicker timePicker;
+    Button notificationButton, setDate, addCustomJourney, timePickerButton;
     public static String TITLE_ID = "Title";
     public static String CONTENT_ID = "Content";
     final static int RQS_1 = 1;
@@ -56,51 +60,100 @@ public class AddJourney extends FragmentActivity implements TimePickerDialog.OnT
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_journey_relative);
 
-    SharedPreferences myPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-    updateFromPreferences(myPrefs);
+        SharedPreferences myPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        updateFromPreferences(myPrefs);
 
-    createNotificationChannel();
+        createNotificationChannel();
 
-    trainsPage = (TextView) findViewById(R.id.trainsPage);
-    trainDB = new TrainDB(getApplicationContext());
-    notificationButton = (Button) findViewById(R.id.notification_button);
-    notificationPrompt = (TextView) findViewById(R.id.notificationPrompt);
-    tableView = (TextView) findViewById(R.id.tableView);
-    setDate = (Button) findViewById(R.id.setDate);
+        trainsPage = (TextView) findViewById(R.id.trainsPage);
+        trainDB = new TrainDB(getApplicationContext());
+        addCustomStartLocation = (EditText) findViewById(R.id.addCustomJourneyStartInput);
+        addCustomEndLocation = (EditText) findViewById(R.id.addCustomJourneyEndInput);
+        notificationButton = (Button) findViewById(R.id.notification_button);
+        notificationPrompt = (TextView) findViewById(R.id.notificationPrompt);
+        tableView = (TextView) findViewById(R.id.tableView);
+
+        timePickerButton = (Button) findViewById(R.id.timePickerButton);
+        final String[] formatted = new String[1];
+        timePickerButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Calendar calendar = Calendar.getInstance();
+                int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                int minute = calendar.get(Calendar.MINUTE);
+
+                TimePickerDialog timePickerDialog = new TimePickerDialog(AddJourney.this,
+                        new TimePickerDialog.OnTimeSetListener() {
+                            @Override
+                            public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
+                                timePickerButton.setText("Departure Time: " + hourOfDay + ":" + convertTime(minute));
+                                int time  = (minute * 60 + (hourOfDay -1) * 60 * 60) * 1000;
+                                SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+                                formatted[0] = format.format(time);
+                            }
+                        }, hour, minute, true);
+                timePickerDialog.show();
+            }
+        });
+
+        /*int time=(timePicker.getCurrentMinute() * 60 + timePicker.getCurrentHour() * 60 * 60) * 1000;
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+        final String formatted = format.format(time);*/
+
+        addCustomJourney = (Button) findViewById(R.id.addCustomJourneyButton);
+        addCustomJourney.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isAddJourneySet()) {
+                    addJourney(addCustomStartLocation.getText().toString(), addCustomEndLocation.getText().toString(), formatted[0]);
+                    showFullTable();
+                }
+            }
+        });
+
+        notificationButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendNotification();
+            }
+        });
+
+
+        setDate = (Button) findViewById(R.id.setDate);
         setDate.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            DialogFragment timePicker = new TimePickerFragment();
-            timePicker.show(getSupportFragmentManager(), "time picker");
-        }
-    });
+            @Override
+            public void onClick(View v) {
+                DialogFragment timePicker = new TimePickerFragment();
+                timePicker.show(getSupportFragmentManager(), "time picker");
+            }
+        });
 
-    Button buttonCancelAlarm = findViewById(R.id.button_cancel);
+        Button buttonCancelAlarm = findViewById(R.id.button_cancel);
         buttonCancelAlarm.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            cancelAlarm();
-        }
-    });
+            @Override
+            public void onClick(View v) {
+                cancelAlarm();
+            }
+        });
 
         setDate.setOnClickListener(new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            DialogFragment dialogFragment = new TimePickerFragment();
-            dialogFragment.show(getSupportFragmentManager(), "timePicker");
-        }
-    });
+            @Override
+            public void onClick(View v) {
+                DialogFragment dialogFragment = new TimePickerFragment();
+                dialogFragment.show(getSupportFragmentManager(), "timePicker");
+            }
+        });
 
-    Button buttonCancel = findViewById(R.id.button_cancel);
+        Button buttonCancel = findViewById(R.id.button_cancel);
         buttonCancel.setOnClickListener(new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            cancelAlarm();
-        }
-    });
+            @Override
+            public void onClick(View v) {
+                cancelAlarm();
+            }
+        });
 
         showFullTable();
-}
+    }
 
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
         Calendar c = Calendar.getInstance();
@@ -185,8 +238,8 @@ public class AddJourney extends FragmentActivity implements TimePickerDialog.OnT
 
     private void print(String[] content) {
         tableView.setText("");
-        for (int i=0; i<content.length; i++) {
-            tableView.append(content[i]+"\n");
+        for (int i = 0; i < content.length; i++) {
+            tableView.append(content[i] + "\n");
         }
     }
 
@@ -194,7 +247,28 @@ public class AddJourney extends FragmentActivity implements TimePickerDialog.OnT
         print(trainDB.getAllCustom());
     }
 
+    private boolean isAddJourneySet() {
+        if (addCustomStartLocation.getText().toString().contentEquals("") ||
+                addCustomEndLocation.getText().toString().contentEquals("")) {
+            Toast toast = Toast.makeText(getApplicationContext(), "Please enter start and end stations", Toast.LENGTH_SHORT);
+            toast.show();
+            return false;
+        }
+        return true;
+    }
 
+    private void addJourney(String journeyStart, String journeyEnd, String formatted) {
+        trainDB.addRowCustomJourney(journeyStart, journeyEnd, formatted);
+    }
+
+    // Adds a leading zero to time if less than 10
+    public String convertTime(int input) {
+        if (input >= 10) {
+            return String.valueOf(input);
+        } else {
+            return "0" + String.valueOf(input);
+        }
+    }
 }
 
 

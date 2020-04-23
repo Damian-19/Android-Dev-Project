@@ -103,7 +103,7 @@ public class CheckTrains extends Activity {
     private boolean isStartSearchSet() {
         if (chosenStartStationField.getText().toString().contentEquals("") ||
                 chosenDepartureTime.getText().toString().contentEquals("")) {
-            Toast toast=Toast. makeText(getApplicationContext(),"Please enter start and end stations.",Toast. LENGTH_SHORT);
+            Toast toast = Toast.makeText(getApplicationContext(),"Please enter start and end stations.",Toast.LENGTH_SHORT);
             toast.show();
             return false;
         }

@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -283,7 +284,7 @@ public class TrainDB{
         private static final String DATABASE_NAME = "TrainDB.db";
         private static final String TIMETABLE_TABLE = "Trains";
         private static final String CUSTOM_JOURNEY_TABLE = "Journeys";
-        private static final int DATABASE_VERSION= 8;
+        private static final int DATABASE_VERSION= 9;
 
         // create database
         private static final String TIMETABLE_CREATE = "create table " +
@@ -298,7 +299,7 @@ public class TrainDB{
                 " integer primary key autoincrement, " +
                 KEY_CUSTOM_JOURNEY_START_LOCATION + " text not null collate nocase, " +
                 KEY_CUSTOM_JOURNEY_END_LOCATION + " text not null collate nocase, " +
-                KEY_CUSTOM_DEPARTURE_TIME + " text not null);";
+                KEY_CUSTOM_DEPARTURE_TIME + " text);";
 
 
         public ModuleDBOpenHelper(Context context, String name, CursorFactory factory, int version) {
