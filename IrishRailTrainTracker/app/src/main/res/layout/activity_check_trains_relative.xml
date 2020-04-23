@@ -19,12 +19,20 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentBottom="true" />
 
+        <TextView
+            android:id="@+id/heading1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/start_spinner"
+            android:text="Timetable Search: "
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5" />
+
         <LinearLayout
-            android:id="@+id/findpricecontainer"
+            android:id="@+id/findJourneyStartFromContainer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_below="@+id/start_spinner" >
+            android:layout_below="@+id/heading1" >
 
             <TextView
                 android:id="@+id/findJourneyStartFrom"
@@ -39,9 +47,21 @@
                 android:layout_weight="10"
                 android:ems="10"
                 android:inputType="text" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/findJourneyStartFromContainer1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/findJourneyStartFromContainer" >
+            <TextView
+                android:id="@+id/findJourneyEnd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/find_journey_end" />
 
             <EditText
-                android:id="@+id/chosenDepartureTime"
+                android:id="@+id/chosenDepartureStation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="10"

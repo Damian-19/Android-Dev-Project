@@ -35,7 +35,14 @@ public class TrainDB{
         if (getAll().length == 0) {
             this.addRow("Tralee", "Cork", "11:00");
             this.addRow("Dublin", "Limerick", "15:00");
-            this.addRow("Kildare", "Cork", "11:00");
+            this.addRow("Limerick", "Cork", "13:00");
+            this.addRow("Newbridge", "Mallow", "10:00");
+            this.addRow("Kildare", "Dublin", "16:00");
+            this.addRow("Athlone", "Thurles", "11:00");
+            this.addRow("Galway", "Tralee", "18:00");
+            this.addRow("Killarney", "Cork", "09:00");
+            this.addRow("Westport", "Sligo", "15:00");
+            this.addRow("Carlow", "Waterford", "17:00");
         }
     }
 
@@ -104,7 +111,7 @@ public class TrainDB{
             journeyEnd = cursor.getString(cursor.getColumnIndex(KEY_JOURNEY_END));
             departureTime = cursor.getString(cursor.getColumnIndex(KEY_DEPARTURE_TIME));
 
-            outputArray.add(journeyStart + "(" + departureTime + ")" + " to " + journeyEnd);
+            outputArray.add(departureTime + " " + "from" + " " + journeyStart + " " + "to" + " " + journeyEnd);
             result = cursor.moveToNext();
         }
         return outputArray.toArray(new String[outputArray.size()]);
@@ -229,7 +236,7 @@ public class TrainDB{
     private static class ModuleDBOpenHelper extends SQLiteOpenHelper {
         private static final String DATABASE_NAME = "TrainDB.db";
         private static final String DATABASE_TABLE = "Trains";
-        private static final int DATABASE_VERSION= 3;
+        private static final int DATABASE_VERSION= 4;
 
         // create database
         private static final String DATABASE_CREATE = " create table " +

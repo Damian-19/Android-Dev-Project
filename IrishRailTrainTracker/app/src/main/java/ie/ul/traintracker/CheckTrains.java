@@ -60,7 +60,7 @@ public class CheckTrains extends Activity {
         trainDB = new TrainDB(getApplicationContext());
         searchStartButton = (Button) findViewById(R.id.findStartStationsButton);
         chosenStartStationField = (EditText) findViewById(R.id.chosenStartStation);
-        chosenDepartureTime = (EditText) findViewById(R.id.chosenDepartureTime);
+        chosenDepartureTime = (EditText) findViewById(R.id.chosenDepartureStation);
         showFullDatabase();
 
         journeyEnd = trainDB.getEnd();
@@ -104,6 +104,7 @@ public class CheckTrains extends Activity {
         if (chosenStartStationField.getText().toString().contentEquals("") ||
                 chosenDepartureTime.getText().toString().contentEquals("")) {
             Toast toast=Toast. makeText(getApplicationContext(),"Please enter start and end stations.",Toast. LENGTH_SHORT);
+            toast.show();
             return false;
         }
         return true;
