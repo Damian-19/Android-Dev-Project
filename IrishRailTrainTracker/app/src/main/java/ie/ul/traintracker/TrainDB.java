@@ -16,9 +16,15 @@ public class TrainDB{
     //Index column
     public static final String KEY_ID = "_id";
 
+    // timetable
     public static final String KEY_JOURNEY_START = "journey_start";
     public static final String KEY_JOURNEY_END = "journey_end";
     public static final String KEY_DEPARTURE_TIME = "departure_time";
+
+    //user journeys
+    public static final String KEY_CUSTOM_JOURNEY_START_LOCATION = "custom_journey_start_location";
+    public static final String KEY_CUSTOM_JOURNEY_END_LOCATION = "custom_journey_end_location";
+    public static final String KEY_CUSTOM_DEPARTURE_TIME = "custom_departure_time";
 
     private Context context;
 
@@ -64,7 +70,7 @@ public class TrainDB{
 
         // insert row into table
         SQLiteDatabase db = moduleDBOpenHelper.getWritableDatabase();
-        db.insert(ModuleDBOpenHelper.DATABASE_TABLE, null, newValues);
+        db.insert(ModuleDBOpenHelper.TIMETABLE_TABLE, null, newValues);
     }
 
     public void deleteRow(int idNr) {
@@ -74,7 +80,7 @@ public class TrainDB{
 
         // delete rows that match where clause
         SQLiteDatabase db = moduleDBOpenHelper.getWritableDatabase();
-        db.delete(ModuleDBOpenHelper.DATABASE_TABLE, where, whereArgs);
+        db.delete(ModuleDBOpenHelper.TIMETABLE_TABLE, where, whereArgs);
     }
 
     public void deleteAll() {
@@ -82,7 +88,7 @@ public class TrainDB{
         String whereArgs[] = null;
 
         SQLiteDatabase db = moduleDBOpenHelper.getWritableDatabase();
-        db.delete(ModuleDBOpenHelper.DATABASE_TABLE, where, whereArgs);
+        db.delete(ModuleDBOpenHelper.TIMETABLE_TABLE, where, whereArgs);
     }
 
     /****************************************
@@ -102,7 +108,7 @@ public class TrainDB{
         String order = null;
 
         SQLiteDatabase db = moduleDBOpenHelper.getWritableDatabase();
-        Cursor cursor = db.query(ModuleDBOpenHelper.DATABASE_TABLE, result_columns, where, whereArgs, groupBy, having, order);
+        Cursor cursor = db.query(ModuleDBOpenHelper.TIMETABLE_TABLE, result_columns, where, whereArgs, groupBy, having, order);
 
         boolean result = cursor.moveToFirst();
         while (result) {
@@ -132,7 +138,7 @@ public class TrainDB{
         String order = null;
 
         SQLiteDatabase db = moduleDBOpenHelper.getWritableDatabase();
-        Cursor cursor = db.query(ModuleDBOpenHelper.DATABASE_TABLE,
+        Cursor cursor = db.query(ModuleDBOpenHelper.TIMETABLE_TABLE,
                 result_columns, where, whereArgs, groupBy, having, order);
 
         boolean result = cursor.moveToFirst();
@@ -161,7 +167,7 @@ public class TrainDB{
         String order = null;
 
         SQLiteDatabase db = moduleDBOpenHelper.getWritableDatabase();
-        Cursor cursor = db.query(ModuleDBOpenHelper.DATABASE_TABLE,
+        Cursor cursor = db.query(ModuleDBOpenHelper.TIMETABLE_TABLE,
                 result_columns, where, whereArgs, groupBy, having, order);
 
         boolean result = cursor.moveToFirst();
@@ -192,7 +198,7 @@ public class TrainDB{
         String order = null;
 
         SQLiteDatabase db = moduleDBOpenHelper.getWritableDatabase();
-        Cursor cursor = db.query(ModuleDBOpenHelper.DATABASE_TABLE,
+        Cursor cursor = db.query(ModuleDBOpenHelper.TIMETABLE_TABLE,
                 result_columns, where, whereArgs, groupBy, having, order);
 
         boolean result = cursor.moveToFirst();
@@ -220,7 +226,7 @@ public class TrainDB{
         String order = null;
 
         SQLiteDatabase db = moduleDBOpenHelper.getWritableDatabase();
-        Cursor cursor = db.query(ModuleDBOpenHelper.DATABASE_TABLE,
+        Cursor cursor = db.query(ModuleDBOpenHelper.TIMETABLE_TABLE,
                 result_columns, where, whereArgs, groupBy, having, order);
 
         boolean result = cursor.moveToFirst();
@@ -235,16 +241,25 @@ public class TrainDB{
 
     private static class ModuleDBOpenHelper extends SQLiteOpenHelper {
         private static final String DATABASE_NAME = "TrainDB.db";
-        private static final String DATABASE_TABLE = "Trains";
+        private static final String TIMETABLE_TABLE = "Trains";
+        private static final String CUSTOM_JOURNEY_TABLE = "Journeys";
         private static final int DATABASE_VERSION= 4;
 
         // create database
         private static final String DATABASE_CREATE = " create table " +
-                DATABASE_TABLE + " (" + KEY_ID +
+                TIMETABLE_TABLE + " (" + KEY_ID +
                 " integer primary key autoincrement, " +
                 KEY_JOURNEY_START + " text not null collate nocase, " +
                 KEY_JOURNEY_END +  " text not null collate nocase, " +
-                KEY_DEPARTURE_TIME + " text not null);";
+                KEY_DEPARTURE_TIME + " text not null);" +
+
+        " create table " +
+                CUSTOM_JOURNEY_TABLE + " (" + KEY_ID +
+                " integer primary key autoincrement, " +
+                KEY_CUSTOM_JOURNEY_START_LOCATION + " text not null collate nocase, " +
+                KEY_CUSTOM_JOURNEY_END_LOCATION + " text not null collate nocase, " +
+                KEY_CUSTOM_DEPARTURE_TIME + " text not null);";
+
 
         public ModuleDBOpenHelper(Context context, String name, CursorFactory factory, int version) {
             super(context, name, factory, version);
@@ -253,7 +268,9 @@ public class TrainDB{
         // called to create database when none exists
         @Override
         public void onCreate(SQLiteDatabase db) {
-            db.execSQL(DATABASE_CREATE);
+
+            db.execSQL(TIMETABLE_TABLE);
+            db.execSQL(CUSTOM_JOURNEY_TABLE);
         }
 
         // called when database version does not match
@@ -266,7 +283,7 @@ public class TrainDB{
                     newVersion + ", which will destroy all old data");
 
             // update to conform to new version
-            db.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE);
+            db.execSQL("DROP TABLE IF EXISTS " + TIMETABLE_TABLE);
             onCreate(db);
         }
     }
