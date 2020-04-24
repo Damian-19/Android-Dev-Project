@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -86,7 +87,7 @@ public class TrainDB{
         db.insert(ModuleDBOpenHelper.CUSTOM_JOURNEY_TABLE, null, contentValues);
     }
 
-    public void deleteRow(int idNr) {
+    public void deleteRowTimetable(int idNr) {
         // where clause to determine which rows to delete
         String where = KEY_ID + "=" + idNr;
         String whereArgs[] = null;
@@ -94,6 +95,14 @@ public class TrainDB{
         // delete rows that match where clause
         SQLiteDatabase db = moduleDBOpenHelper.getWritableDatabase();
         db.delete(ModuleDBOpenHelper.TIMETABLE_TABLE, where, whereArgs);
+    }
+
+    public void deleteRowCustom(int idNr) {
+        String where = KEY_ID + "=" + idNr;
+        String whereArgs[] = null;
+
+        SQLiteDatabase db = moduleDBOpenHelper.getWritableDatabase();
+        db.delete(ModuleDBOpenHelper.CUSTOM_JOURNEY_TABLE, where, whereArgs);
     }
 
     public void deleteAll() {

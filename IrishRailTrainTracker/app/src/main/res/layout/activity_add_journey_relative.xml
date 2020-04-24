@@ -7,7 +7,7 @@
         android:id="@+id/notification_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/trainsPage"
+        android:layout_below="@+id/start_spinner"
         android:text="Send Test Notification"/>
     <Button
         android:id="@+id/setDate"
@@ -105,5 +105,18 @@
         android:layout_height="wrap_content"
         android:freezesText="true"
         android:layout_alignParentBottom="true"/>
+
+    <Spinner
+        android:id="@+id/start_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"/>
+
+    <Button
+        android:id="@+id/spinner_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/start_spinner"
+        android:text="Delete Journey" />
 
 </android.widget.RelativeLayout>

@@ -48,7 +48,7 @@
         android:layout_below="@id/checkTrains"
         android:layout_marginEnd="15dp"
         android:minHeight="60dp"
-        android:text="@string/add_a_journey"
+        android:text="@string/your_journeys"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Button"
         android:layout_weight="1"/>
 </LinearLayout>
