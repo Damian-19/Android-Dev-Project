@@ -41,6 +41,7 @@ public class TrainDB{
 
         //populate database
         if (getAllTimetable().length == 0 || getAllCustom().length == 0) {
+            // populate timetable table
             this.addRowTimetable("Tralee", "Cork", "11:00");
             this.addRowTimetable("Dublin", "Limerick", "15:00");
             this.addRowTimetable("Limerick", "Cork", "13:00");
@@ -51,6 +52,8 @@ public class TrainDB{
             this.addRowTimetable("Killarney", "Cork", "09:00");
             this.addRowTimetable("Westport", "Sligo", "15:00");
             this.addRowTimetable("Carlow", "Waterford", "17:00");
+            // populate custom journeys table
+            this.addRowCustomJourney("Dublin", "Limerick", "10:00");
             this.addRowCustomJourney("Tralee", "Cork", "14:00");
         }
     }
@@ -62,6 +65,7 @@ public class TrainDB{
         moduleDBOpenHelper.close();
     }
 
+    // Adds a row to the timetable table
     public void addRowTimetable(String journeyStart, String journeyEnd, String departureTime) {
         // create new row of values
         ContentValues newValues = new ContentValues();
@@ -76,6 +80,7 @@ public class TrainDB{
         db.insert(ModuleDBOpenHelper.TIMETABLE_TABLE, null, newValues);
     }
 
+    // Adds a row to the custom journeys table
     public void addRowCustomJourney(String customJourneyStartLocation, String customJourneyEndLocation, String customDepartureTime) {
         ContentValues contentValues = new ContentValues();
 
@@ -87,19 +92,21 @@ public class TrainDB{
         db.insert(ModuleDBOpenHelper.CUSTOM_JOURNEY_TABLE, null, contentValues);
     }
 
-    public void deleteRowTimetable(int idNr) {
+    // Delete a row from the timetable table
+    public void deleteRowTimetable(int index) {
         // where clause to determine which rows to delete
-        String where = KEY_ID + "=" + idNr;
-        String whereArgs[] = null;
+        String where = KEY_ID + "=" + index;
+        String[] whereArgs = null;
 
         // delete rows that match where clause
         SQLiteDatabase db = moduleDBOpenHelper.getWritableDatabase();
         db.delete(ModuleDBOpenHelper.TIMETABLE_TABLE, where, whereArgs);
     }
 
-    public void deleteRowCustom(int idNr) {
-        String where = KEY_ID + "=" + idNr;
-        String whereArgs[] = null;
+    // Delete row from the custom journeys table
+    public void deleteRowCustom(Integer index) {
+        String where = KEY_ID + "= ?";
+        String[] whereArgs = new String[]{index.toString()};
 
         SQLiteDatabase db = moduleDBOpenHelper.getWritableDatabase();
         db.delete(ModuleDBOpenHelper.CUSTOM_JOURNEY_TABLE, where, whereArgs);
@@ -173,6 +180,7 @@ public class TrainDB{
         return outputArray.toArray(new String[outputArray.size()]);
     }
 
+    // not in use
     public String[] getStart() {
 
         ArrayList<String> outputArray = new ArrayList<String>();
@@ -203,6 +211,7 @@ public class TrainDB{
 
     }
 
+    // not in use
     public String[] getJourney(String journeyStartLocation, String journeyDepartureTime) {
         ArrayList<String> outputArray = new ArrayList<String>();
         String[] result_columns = new String[]{
@@ -233,6 +242,7 @@ public class TrainDB{
 
     }
 
+    // not in use
     public String[] getEnd() {
 
         ArrayList<String> outputArray = new ArrayList<String>();
@@ -261,6 +271,7 @@ public class TrainDB{
         return outputArray.toArray(new String[outputArray.size()]);
     }
 
+    // not in use
     public String[] getStartTime() {
 
         ArrayList<String> outputArray = new ArrayList<String>();
@@ -295,7 +306,8 @@ public class TrainDB{
         private static final String CUSTOM_JOURNEY_TABLE = "Journeys";
         private static final int DATABASE_VERSION= 9;
 
-        // create database
+        // create database (collate nocase used to ignore case for queries)
+        // create timetable table
         private static final String TIMETABLE_CREATE = "create table " +
                 TIMETABLE_TABLE + " (" + KEY_ID +
                 " integer primary key autoincrement, " +
@@ -303,6 +315,7 @@ public class TrainDB{
                 KEY_JOURNEY_END +  " text not null collate nocase, " +
                 KEY_DEPARTURE_TIME + " text not null);";
 
+        // create custom journeys table
         private static final String CUSTOM_JOURNEY_CREATE = "create table " +
                 CUSTOM_JOURNEY_TABLE + " (" + KEY_ID +
                 " integer primary key autoincrement, " +

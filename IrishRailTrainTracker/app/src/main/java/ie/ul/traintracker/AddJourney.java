@@ -59,7 +59,7 @@ public class AddJourney extends FragmentActivity {
     public static String TITLE_ID = "Title";
     public static String CONTENT_ID = "Content";
     final static int RQS_1 = 1;
-    private Integer delString;
+    private Integer delID;
 
     TrainDB trainDB;
 
@@ -86,7 +86,7 @@ public class AddJourney extends FragmentActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 //Cursor cursor = (Cursor) (parent.getAdapter().getItem(position));
-                delString = (int) trainSpinner.getItemIdAtPosition((int) id);
+                delID = (int) trainSpinner.getItemIdAtPosition((int) id);
                 //delString = cursor.getInt(cursor.getColumnIndex(trainDB.KEY_ID));
             }
 
@@ -99,7 +99,7 @@ public class AddJourney extends FragmentActivity {
         deleteButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                trainDB.deleteRowCustom(delString + 1);
+                trainDB.deleteRowCustom(delID + 1);
                 showFullTable();
                 buildSpinner();
                 Toast toast = Toast.makeText(getApplicationContext(), "Journey Deleted", Toast.LENGTH_SHORT);
@@ -137,10 +137,6 @@ public class AddJourney extends FragmentActivity {
             }
         });
 
-        /*int time=(timePicker.getCurrentMinute() * 60 + timePicker.getCurrentHour() * 60 * 60) * 1000;
-        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
-        final String formatted = format.format(time);*/
-
         addCustomJourney = (Button) findViewById(R.id.addCustomJourneyButton);
         addCustomJourney.setOnClickListener(new OnClickListener() {
             @Override
@@ -151,6 +147,7 @@ public class AddJourney extends FragmentActivity {
                     if (formatted[0] != null) {
                         addJourney(convert(addCustomStartLocation.getText().toString()), convert(addCustomEndLocation.getText().toString()), formatted[0]);
                         showFullTable();
+                        buildSpinner();
                     } else {
                         Toast toast = Toast.makeText(getApplicationContext(), "Departure time not set", Toast.LENGTH_SHORT);
                         toast.show();
@@ -209,17 +206,6 @@ public class AddJourney extends FragmentActivity {
         trainSpinner.setAdapter(trainAdapter);
     }
 
-
-    /*public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-        calendar.set(Calendar.MINUTE, minute);
-        calendar.set(Calendar.SECOND, 0);
-
-        updateTimeText(calendar);
-        startAlarm(calendar);
-    }*/
-
     private void updateTimeText(Calendar calendar) {
         String timeText = "Alarm set for: ";
         timeText += DateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.getTime());
@@ -257,6 +243,7 @@ public class AddJourney extends FragmentActivity {
         }
     }
 
+    // creates the notification channel for newer versions of Android
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = getString(R.string.channel_name);
@@ -271,6 +258,7 @@ public class AddJourney extends FragmentActivity {
         }
     }
 
+    // builds & sends notification
     public void sendNotification() {
 
         Intent intent = new Intent(this, CheckTrains.class);
@@ -302,6 +290,7 @@ public class AddJourney extends FragmentActivity {
         print(trainDB.getAllCustom());
     }
 
+    // checks if all fields are filled out before adding to the database
     private boolean isAddJourneySet() {
         if (addCustomStartLocation.getText().toString().contentEquals("") ||
                 addCustomEndLocation.getText().toString().contentEquals("")) {
@@ -312,6 +301,7 @@ public class AddJourney extends FragmentActivity {
         return true;
     }
 
+    // adds the journey using the database method
     private void addJourney(String journeyStart, String journeyEnd, String formatted) {
         trainDB.addRowCustomJourney(journeyStart, journeyEnd, formatted);
     }
