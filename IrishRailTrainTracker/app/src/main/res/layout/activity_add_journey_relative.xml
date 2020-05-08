@@ -89,6 +89,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Set Departure Time"/>
+        <Button
+            android:id="@+id/datePickerButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Set Departure Date" />
 
         <Button
             android:id="@+id/addCustomJourneyButton"
@@ -105,18 +110,5 @@
         android:layout_height="wrap_content"
         android:freezesText="true"
         android:layout_alignParentBottom="true"/>
-
-    <Spinner
-        android:id="@+id/start_spinner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"/>
-
-    <Button
-        android:id="@+id/spinner_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/start_spinner"
-        android:text="Delete Journey" />
 
 </android.widget.RelativeLayout>

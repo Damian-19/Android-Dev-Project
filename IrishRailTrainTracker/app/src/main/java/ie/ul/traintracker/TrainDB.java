@@ -26,6 +26,7 @@ public class TrainDB{
     //user journeys
     public static final String KEY_CUSTOM_JOURNEY_START_LOCATION = "custom_journey_start_location";
     public static final String KEY_CUSTOM_JOURNEY_END_LOCATION = "custom_journey_end_location";
+    public static final String KEY_CUSTOM_DEPARTURE_DATE = "custom_departure_date";
     public static final String KEY_CUSTOM_DEPARTURE_TIME = "custom_departure_time";
 
     private Context context;
@@ -53,8 +54,8 @@ public class TrainDB{
             this.addRowTimetable("Westport", "Sligo", "15:00");
             this.addRowTimetable("Carlow", "Waterford", "17:00");
             // populate custom journeys table
-            this.addRowCustomJourney("Dublin", "Limerick", "10:00");
-            this.addRowCustomJourney("Tralee", "Cork", "14:00");
+            this.addRowCustomJourney("Dublin", "Limerick", "10/05/2020", "10:00");
+            this.addRowCustomJourney("Tralee", "Cork", "12/05/2020", "14:00");
         }
     }
 
@@ -81,11 +82,12 @@ public class TrainDB{
     }
 
     // Adds a row to the custom journeys table
-    public void addRowCustomJourney(String customJourneyStartLocation, String customJourneyEndLocation, String customDepartureTime) {
+    public void addRowCustomJourney(String customJourneyStartLocation, String customJourneyEndLocation, String customDepartureDate, String customDepartureTime) {
         ContentValues contentValues = new ContentValues();
 
         contentValues.put(KEY_CUSTOM_JOURNEY_START_LOCATION, customJourneyStartLocation);
         contentValues.put(KEY_CUSTOM_JOURNEY_END_LOCATION, customJourneyEndLocation);
+        contentValues.put(KEY_CUSTOM_DEPARTURE_DATE, customDepartureDate);
         contentValues.put(KEY_CUSTOM_DEPARTURE_TIME, customDepartureTime);
 
         SQLiteDatabase db = moduleDBOpenHelper.getWritableDatabase();
@@ -155,9 +157,9 @@ public class TrainDB{
     public String[] getAllCustom() {
         ArrayList<String> outputArray = new ArrayList<String>();
         String[] result_columns = new String[]{
-                KEY_CUSTOM_JOURNEY_START_LOCATION, KEY_CUSTOM_JOURNEY_END_LOCATION, KEY_CUSTOM_DEPARTURE_TIME};
+                KEY_CUSTOM_JOURNEY_START_LOCATION, KEY_CUSTOM_JOURNEY_END_LOCATION, KEY_CUSTOM_DEPARTURE_DATE, KEY_CUSTOM_DEPARTURE_TIME};
 
-        String customJourneyStart, customJourneyEnd, customDepartureTime;
+        String customJourneyStart, customJourneyEnd, customDepartureTime, customDepartureDate;
         String where = null;
         String whereArgs[] = null;
         String groupBy = null;
@@ -173,8 +175,9 @@ public class TrainDB{
             customJourneyStart = cursor.getString(cursor.getColumnIndex(KEY_CUSTOM_JOURNEY_START_LOCATION));
             customJourneyEnd = cursor.getString(cursor.getColumnIndex(KEY_CUSTOM_JOURNEY_END_LOCATION));
             customDepartureTime = cursor.getString(cursor.getColumnIndex(KEY_CUSTOM_DEPARTURE_TIME));
+            customDepartureDate = cursor.getString(cursor.getColumnIndex(KEY_CUSTOM_DEPARTURE_DATE));
 
-            outputArray.add(customDepartureTime + " " + "from" + " " + customJourneyStart + " " + "to" + " " + customJourneyEnd);
+            outputArray.add(customDepartureTime + " " + "on" + " " + customDepartureDate + " " + "from" + " " + customJourneyStart + " " + "to" + " " + customJourneyEnd);
             result = cursor.moveToNext();
         }
         return outputArray.toArray(new String[outputArray.size()]);
@@ -304,7 +307,7 @@ public class TrainDB{
         private static final String DATABASE_NAME = "TrainDB.db";
         private static final String TIMETABLE_TABLE = "Trains";
         private static final String CUSTOM_JOURNEY_TABLE = "Journeys";
-        private static final int DATABASE_VERSION= 9;
+        private static final int DATABASE_VERSION= 12;
 
         // create database (collate nocase used to ignore case for queries)
         // create timetable table
@@ -321,6 +324,7 @@ public class TrainDB{
                 " integer primary key autoincrement, " +
                 KEY_CUSTOM_JOURNEY_START_LOCATION + " text not null collate nocase, " +
                 KEY_CUSTOM_JOURNEY_END_LOCATION + " text not null collate nocase, " +
+                KEY_CUSTOM_DEPARTURE_DATE + " text, " +
                 KEY_CUSTOM_DEPARTURE_TIME + " text);";
 
 

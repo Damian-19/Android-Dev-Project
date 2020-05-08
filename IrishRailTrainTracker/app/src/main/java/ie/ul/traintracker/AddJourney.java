@@ -3,6 +3,7 @@ package ie.ul.traintracker;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -37,6 +38,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.SimpleTimeZone;
@@ -47,15 +49,16 @@ import java.util.TimeZone;
 public class AddJourney extends FragmentActivity {
 
     public static final String CHANNEL_ID = "1001";
+    final Calendar calendar = Calendar.getInstance();
 
 
     TextView trainsPage, notificationPrompt, tableView, timePicked;
     EditText addCustomStartLocation, addCustomEndLocation;
     TimePickerDialog timePickerDialog;
+    DatePickerDialog datePickerDialog;
     String[] customJourney;
-    Spinner trainSpinner;
     TimePicker timePicker;
-    Button notificationButton, setDate, addCustomJourney, timePickerButton, deleteButton;
+    Button notificationButton, setDate, addCustomJourney, timePickerButton, datePickerButton;
     public static String TITLE_ID = "Title";
     public static String CONTENT_ID = "Content";
     final static int RQS_1 = 1;
@@ -79,38 +82,33 @@ public class AddJourney extends FragmentActivity {
         notificationButton = (Button) findViewById(R.id.notification_button);
         notificationPrompt = (TextView) findViewById(R.id.notificationPrompt);
         tableView = (TextView) findViewById(R.id.tableView);
-        trainSpinner = (Spinner) findViewById(R.id.start_spinner);
-        deleteButton = (Button) findViewById(R.id.spinner_button);
 
-        trainSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                //Cursor cursor = (Cursor) (parent.getAdapter().getItem(position));
-                delID = (int) trainSpinner.getItemIdAtPosition((int) id);
-                //delString = cursor.getInt(cursor.getColumnIndex(trainDB.KEY_ID));
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
-        deleteButton.setOnClickListener(new OnClickListener() {
+        datePickerButton = (Button) findViewById(R.id.datePickerButton);
+        final String[] dateFormatted = new String[1];
+        datePickerButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                trainDB.deleteRowCustom(delID + 1);
-                showFullTable();
-                buildSpinner();
-                Toast toast = Toast.makeText(getApplicationContext(), "Journey Deleted", Toast.LENGTH_SHORT);
-                toast.show();
+                final Calendar calendar = Calendar.getInstance();
+                int year = calendar.get(Calendar.YEAR);
+                int month = calendar.get(Calendar.MONTH);
+                int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+
+                DatePickerDialog datePickerDialog = new DatePickerDialog(AddJourney.this,
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                                calendar.set(Calendar.YEAR, year);
+                                calendar.set(Calendar.MONTH, month);
+                                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                                datePickerButton.setText("Departure Date: " + addLeadingZero(dayOfMonth) + "/" + addLeadingZero(month) + "/" + year);
+                                int date = (dayOfMonth + month + year);
+                                SimpleDateFormat format = new SimpleDateFormat("DD/MM/YYYY");
+                                dateFormatted[0] = format.format(date);
+                            }
+                        }, year, month, dayOfMonth);
+                datePickerDialog.show();
             }
         });
-
-        customJourney = trainDB.getAllCustom();
-        buildSpinner();
-
-
 
         timePickerButton = (Button) findViewById(R.id.timePickerButton);
         final String[] formatted = new String[1];
@@ -125,17 +123,23 @@ public class AddJourney extends FragmentActivity {
                         new TimePickerDialog.OnTimeSetListener() {
                             @Override
                             public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
-                                timePickerButton.setText("Departure Time: " + hourOfDay + ":" + convertTime(minute));
+                                calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                                calendar.set(Calendar.MINUTE, minute);
+                                calendar.set(Calendar.SECOND, 0);
+                                timePickerButton.setText("Departure Time: " + addLeadingZero(hourOfDay) + ":" + addLeadingZero(minute));
                                 int time  = (minute * 60 + (hourOfDay -1) * 60 * 60) * 1000;
                                 SimpleDateFormat format = new SimpleDateFormat("HH:mm");
                                 formatted[0] = format.format(time);
+
+                                startAlarm(calendar);
                             }
                         }, hour, minute, true);
                 timePickerDialog.show();
-                updateTimeText(calendar);
-                startAlarm(calendar);
             }
         });
+
+
+
 
         addCustomJourney = (Button) findViewById(R.id.addCustomJourneyButton);
         addCustomJourney.setOnClickListener(new OnClickListener() {
@@ -144,10 +148,10 @@ public class AddJourney extends FragmentActivity {
                 // Check if the stations have been set
                 if (isAddJourneySet()) {
                     // Check if the departure time has been set
-                    if (formatted[0] != null) {
-                        addJourney(convert(addCustomStartLocation.getText().toString()), convert(addCustomEndLocation.getText().toString()), formatted[0]);
+                    if (formatted[0] != null && dateFormatted[0] != null) {
+                        addJourney(convert(addCustomStartLocation.getText().toString()), convert(addCustomEndLocation.getText().toString()), dateFormatted[0], formatted[0]);
                         showFullTable();
-                        buildSpinner();
+                        //buildSpinner();
                     } else {
                         Toast toast = Toast.makeText(getApplicationContext(), "Departure time not set", Toast.LENGTH_SHORT);
                         toast.show();
@@ -200,12 +204,6 @@ public class AddJourney extends FragmentActivity {
         showFullTable();
     }
 
-    private void buildSpinner() {
-        ArrayAdapter<String> trainAdapter = new ArrayAdapter<String>(getBaseContext(), R.layout.list_item, customJourney);
-        trainAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        trainSpinner.setAdapter(trainAdapter);
-    }
-
     private void updateTimeText(Calendar calendar) {
         String timeText = "Alarm set for: ";
         timeText += DateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.getTime());
@@ -215,12 +213,8 @@ public class AddJourney extends FragmentActivity {
 
     private void startAlarm(Calendar calendar) {
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(this, AlarmReceiver.class);
+        Intent intent = new Intent(AddJourney.this, AlarmReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
-
-        if (calendar.before(Calendar.getInstance())) {
-            calendar.add(Calendar.DATE, 1);
-        }
 
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
     }
@@ -302,16 +296,16 @@ public class AddJourney extends FragmentActivity {
     }
 
     // adds the journey using the database method
-    private void addJourney(String journeyStart, String journeyEnd, String formatted) {
-        trainDB.addRowCustomJourney(journeyStart, journeyEnd, formatted);
+    private void addJourney(String journeyStart, String journeyEnd, String dateFormatted, String formatted) {
+        trainDB.addRowCustomJourney(journeyStart, journeyEnd, dateFormatted,  formatted);
     }
 
     private void deleteJourney(int index) {
         trainDB.deleteRowTimetable(index);
     }
 
-    // Adds a leading zero to time if less than 10
-    public String convertTime(int input) {
+    // Adds a leading zero if less than 10
+    public String addLeadingZero(int input) {
         if (input >= 10) {
             return String.valueOf(input);
         } else {
