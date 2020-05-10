@@ -115,7 +115,7 @@ public class MainActivity extends Activity {
         }
     }
 
-    //Replaces the need for seperate intents in every button listener
+    //Replaces the need for separate intents in every button listener
     private void navigateToView(Class viewName) {
         Intent intent = new Intent(getBaseContext(), viewName);
         startActivity(intent);

@@ -3,8 +3,10 @@ package ie.ul.traintracker;
 import android.annotation.TargetApi;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.Intent;
 import android.os.Build;
 
 import androidx.core.app.NotificationCompat;
@@ -42,12 +44,19 @@ public class NotificationHelper extends ContextWrapper {
         return mManager;
     }
 
+
+
     public NotificationCompat.Builder getChannelNotification() {
+        Intent intent = new Intent(this, AddJourney.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
         return new NotificationCompat.Builder(getApplicationContext(), channelID)
                 .setContentTitle(TITLE_ID)
                 .setContentText(CONTENT_ID)
                 .setSmallIcon(R.drawable.logo)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setContentIntent(pendingIntent)
                 .setAutoCancel(true);
     }
 }

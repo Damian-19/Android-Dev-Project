@@ -24,7 +24,11 @@
         <activity android:name="ie.ul.traintracker.Settings"
             android:label="Settings"/>
         <receiver
-            android:name="ie.ul.traintracker.AlarmReceiver" />
+            android:name="ie.ul.traintracker.AlarmReceiver" android:enabled="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

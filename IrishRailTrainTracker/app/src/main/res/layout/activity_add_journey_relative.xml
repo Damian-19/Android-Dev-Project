@@ -9,25 +9,13 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/start_spinner"
         android:text="Send Test Notification"/>
-    <Button
-        android:id="@+id/setDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/notification_button"
-        android:text="Schedule Notification"/>
-    <TextView
-        android:id="@+id/notificationPrompt"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/setDate"
-        android:hint="Select Date"
-        android:padding="16dp"/>
+
     <Button
         android:id="@+id/button_cancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Cancel Alarm"
-        android:layout_below="@id/notificationPrompt"/>
+        android:text="Remove Current Alarm"
+        android:layout_below="@id/notification_button"/>
 
     <Space
         android:id="@+id/spacer"
@@ -89,11 +77,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Set Departure Time"/>
-        <Button
-            android:id="@+id/datePickerButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Set Departure Date" />
 
         <Button
             android:id="@+id/addCustomJourneyButton"
