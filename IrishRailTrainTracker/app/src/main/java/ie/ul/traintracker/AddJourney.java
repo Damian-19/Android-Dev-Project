@@ -74,8 +74,6 @@ public class AddJourney extends FragmentActivity {
         SharedPreferences myPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         updateFromPreferences(myPrefs);
 
-        createNotificationChannel();
-
         trainDB = new TrainDB(getApplicationContext());
         addCustomStartLocation = (EditText) findViewById(R.id.addCustomJourneyStartInput);
         addCustomEndLocation = (EditText) findViewById(R.id.addCustomJourneyEndInput);
@@ -83,7 +81,7 @@ public class AddJourney extends FragmentActivity {
         notificationPrompt = (TextView) findViewById(R.id.notificationPrompt);
         tableView = (TextView) findViewById(R.id.tableView);
 
-        datePickerButton = (Button) findViewById(R.id.datePickerButton);
+        /*datePickerButton = (Button) findViewById(R.id.datePickerButton);
         final String[] dateFormatted = new String[1];
         datePickerButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -108,10 +106,11 @@ public class AddJourney extends FragmentActivity {
                         }, year, month, dayOfMonth);
                 datePickerDialog.show();
             }
-        });
+        });*/
 
         timePickerButton = (Button) findViewById(R.id.timePickerButton);
         final String[] formatted = new String[1];
+        final String[] dateFormatted = new String[1];
         timePickerButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -126,7 +125,7 @@ public class AddJourney extends FragmentActivity {
                                 calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
                                 calendar.set(Calendar.MINUTE, minute);
                                 calendar.set(Calendar.SECOND, 0);
-                                timePickerButton.setText("Departure Time: " + addLeadingZero(hourOfDay) + ":" + addLeadingZero(minute));
+                                //timePickerButton.setText("Departure Time: " + addLeadingZero(hourOfDay) + ":" + addLeadingZero(minute));
                                 int time  = (minute * 60 + (hourOfDay -1) * 60 * 60) * 1000;
                                 SimpleDateFormat format = new SimpleDateFormat("HH:mm");
                                 formatted[0] = format.format(time);
@@ -135,6 +134,27 @@ public class AddJourney extends FragmentActivity {
                             }
                         }, hour, minute, true);
                 timePickerDialog.show();
+
+
+                int year = calendar.get(Calendar.YEAR);
+                int month = calendar.get(Calendar.MONTH);
+                int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+
+                DatePickerDialog datePickerDialog = new DatePickerDialog(AddJourney.this,
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                                calendar.set(Calendar.YEAR, year);
+                                calendar.set(Calendar.MONTH, month);
+                                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                                //datePickerButton.setText("Departure Date: " + addLeadingZero(dayOfMonth) + "/" + addLeadingZero(month) + "/" + year);
+                                int date = (dayOfMonth + month + year);
+                                SimpleDateFormat format = new SimpleDateFormat("DD/MM/YYYY");
+                                dateFormatted[0] = format.format(date);
+                                //startAlarm(calendar);
+                            }
+                        }, year, month, dayOfMonth);
+                datePickerDialog.show();
             }
         });
 
@@ -153,7 +173,7 @@ public class AddJourney extends FragmentActivity {
                         showFullTable();
                         //buildSpinner();
                     } else {
-                        Toast toast = Toast.makeText(getApplicationContext(), "Departure time not set", Toast.LENGTH_SHORT);
+                        Toast toast = Toast.makeText(getApplicationContext(), "Please fill out all fields", Toast.LENGTH_SHORT);
                         toast.show();
                     }
                 }
