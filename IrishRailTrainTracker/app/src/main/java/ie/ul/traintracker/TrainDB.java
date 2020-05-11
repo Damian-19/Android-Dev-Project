@@ -21,6 +21,7 @@ public class TrainDB{
     // timetable
     public static final String KEY_JOURNEY_START = "journey_start";
     public static final String KEY_JOURNEY_END = "journey_end";
+    public static final String KEY_DEPARTURE_DATE = "departure_date";
     public static final String KEY_DEPARTURE_TIME = "departure_time";
 
     //user journeys
@@ -43,16 +44,16 @@ public class TrainDB{
         //populate database
         if (getAllTimetable().length == 0 || getAllCustom().length == 0) {
             // populate timetable table
-            this.addRowTimetable("Tralee", "Cork", "11:00");
-            this.addRowTimetable("Dublin", "Limerick", "15:00");
-            this.addRowTimetable("Limerick", "Cork", "13:00");
-            this.addRowTimetable("Newbridge", "Mallow", "10:00");
-            this.addRowTimetable("Kildare", "Dublin", "16:00");
-            this.addRowTimetable("Athlone", "Thurles", "11:00");
-            this.addRowTimetable("Galway", "Tralee", "18:00");
-            this.addRowTimetable("Killarney", "Cork", "09:00");
-            this.addRowTimetable("Westport", "Sligo", "15:00");
-            this.addRowTimetable("Carlow", "Waterford", "17:00");
+            this.addRowTimetable("Tralee", "Cork", "20/05/2020", "11:00");
+            this.addRowTimetable("Dublin", "Limerick", "28/05/2020", "15:00");
+            this.addRowTimetable("Limerick", "Cork", "15/06/2020", "13:00");
+            this.addRowTimetable("Newbridge", "Mallow", "28/06/2020", "10:00");
+            this.addRowTimetable("Kildare", "Dublin", "12/07/2020", "16:00");
+            this.addRowTimetable("Athlone", "Thurles", "23/07/2020", "11:00");
+            this.addRowTimetable("Galway", "Tralee", "27/08/2020", "18:00");
+            this.addRowTimetable("Killarney", "Cork", "15/09/2020", "09:00");
+            this.addRowTimetable("Westport", "Sligo", "18/11/2020", "15:00");
+            this.addRowTimetable("Carlow", "Waterford", "15/02/2021", "17:00");
             // populate custom journeys table
             this.addRowCustomJourney("Dublin", "Limerick", "10/05/2020", "10:00");
             this.addRowCustomJourney("Tralee", "Cork", "12/05/2020", "14:00");
@@ -67,13 +68,14 @@ public class TrainDB{
     }
 
     // Adds a row to the timetable table
-    public void addRowTimetable(String journeyStart, String journeyEnd, String departureTime) {
+    public void addRowTimetable(String journeyStart, String journeyEnd, String departureDate, String departureTime) {
         // create new row of values
         ContentValues newValues = new ContentValues();
 
         // assign values for each row
         newValues.put(KEY_JOURNEY_START, journeyStart);
         newValues.put(KEY_JOURNEY_END, journeyEnd);
+        newValues.put(KEY_DEPARTURE_DATE, departureDate);
         newValues.put(KEY_DEPARTURE_TIME, departureTime);
 
         // insert row into table
@@ -129,9 +131,9 @@ public class TrainDB{
     public String[] getAllTimetable() {
         ArrayList<String> outputArray = new ArrayList<String>();
         String[] result_columns = new String[]{
-                KEY_JOURNEY_START, KEY_JOURNEY_END, KEY_DEPARTURE_TIME};
+                KEY_JOURNEY_START, KEY_JOURNEY_END, KEY_DEPARTURE_DATE, KEY_DEPARTURE_TIME};
 
-        String journeyStart, journeyEnd, departureTime;
+        String journeyStart, journeyEnd, departureDate, departureTime;
         String where = null;
         String whereArgs[] = null;
         String groupBy = null;
@@ -146,9 +148,10 @@ public class TrainDB{
 
             journeyStart = cursor.getString(cursor.getColumnIndex(KEY_JOURNEY_START));
             journeyEnd = cursor.getString(cursor.getColumnIndex(KEY_JOURNEY_END));
+            departureDate = cursor.getString(cursor.getColumnIndex(KEY_DEPARTURE_DATE));
             departureTime = cursor.getString(cursor.getColumnIndex(KEY_DEPARTURE_TIME));
 
-            outputArray.add(departureTime + " " + "from" + " " + journeyStart + " " + "to" + " " + journeyEnd);
+            outputArray.add(departureTime + " on " + departureDate + " from " + " " + journeyStart + " " + "to" + " " + journeyEnd);
             result = cursor.moveToNext();
         }
         return outputArray.toArray(new String[outputArray.size()]);
@@ -218,9 +221,9 @@ public class TrainDB{
     public String[] getJourney(String journeyStartLocation, String journeyDepartureTime) {
         ArrayList<String> outputArray = new ArrayList<String>();
         String[] result_columns = new String[]{
-                KEY_DEPARTURE_TIME, KEY_JOURNEY_END, KEY_JOURNEY_START};
+                KEY_DEPARTURE_TIME, KEY_JOURNEY_END, KEY_DEPARTURE_DATE, KEY_JOURNEY_START};
 
-        String journeyStart, journeyEnd, departureTime;
+        String journeyStart, journeyEnd, departureDate, departureTime;
 
         String where = KEY_JOURNEY_START + "= ? AND " + KEY_JOURNEY_END + "= ?";
         String whereArgs[] = {journeyStartLocation.toString(), journeyDepartureTime.toString()};
@@ -236,9 +239,10 @@ public class TrainDB{
         while (result) {
             journeyStart = cursor.getString(cursor.getColumnIndex(KEY_JOURNEY_START));
             journeyEnd = cursor.getString(cursor.getColumnIndex(KEY_JOURNEY_END));
+            departureDate = cursor.getString(cursor.getColumnIndex(KEY_DEPARTURE_DATE));
             departureTime = cursor.getString(cursor.getColumnIndex(KEY_DEPARTURE_TIME));
 
-            outputArray.add(departureTime + " " + "from" + " " + journeyStart + " " + "to" + " " + journeyEnd);
+            outputArray.add(departureTime + " on " + departureDate + " from " + " " + journeyStart + " " + "to" + " " + journeyEnd);
             result = cursor.moveToNext();
         }
         return outputArray.toArray(new String[outputArray.size()]);
@@ -307,7 +311,7 @@ public class TrainDB{
         private static final String DATABASE_NAME = "TrainDB.db";
         private static final String TIMETABLE_TABLE = "Trains";
         private static final String CUSTOM_JOURNEY_TABLE = "Journeys";
-        private static final int DATABASE_VERSION= 12;
+        private static final int DATABASE_VERSION= 15;
 
         // create database (collate nocase used to ignore case for queries)
         // create timetable table
@@ -316,6 +320,7 @@ public class TrainDB{
                 " integer primary key autoincrement, " +
                 KEY_JOURNEY_START + " text not null collate nocase, " +
                 KEY_JOURNEY_END +  " text not null collate nocase, " +
+                KEY_DEPARTURE_DATE + " text, " +
                 KEY_DEPARTURE_TIME + " text not null);";
 
         // create custom journeys table

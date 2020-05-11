@@ -44,7 +44,6 @@ public class CheckTrains extends Activity {
 
     TextView dbView;
     String[] journeyStart, journeyEnd, departureTime;
-    Spinner trainSpinner;
     Button searchStartButton;
     EditText chosenStartStationField, chosenDepartureTime;
 
@@ -56,20 +55,11 @@ public class CheckTrains extends Activity {
         setContentView(R.layout.activity_check_trains_relative);
 
         dbView = (TextView) findViewById(R.id.dbcontent);
-        trainSpinner = (Spinner) findViewById(R.id.start_spinner);
         trainDB = new TrainDB(getApplicationContext());
         searchStartButton = (Button) findViewById(R.id.findStartStationsButton);
         chosenStartStationField = (EditText) findViewById(R.id.chosenStartStation);
         chosenDepartureTime = (EditText) findViewById(R.id.chosenDepartureStation);
         showFullTable();
-
-        journeyEnd = trainDB.getEnd();
-        departureTime = trainDB.getStartTime();
-        journeyStart = trainDB.getStart();
-
-        ArrayAdapter<String> trainAdapter = new ArrayAdapter<String>(getBaseContext(), R.layout.list_item, journeyStart);
-        trainAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        trainSpinner.setAdapter(trainAdapter);
 
 
         searchStartButton.setOnClickListener(new OnClickListener() {

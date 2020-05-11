@@ -55,7 +55,7 @@ public class AddJourney extends FragmentActivity {
     final Calendar calendar = Calendar.getInstance();
 
 
-    TextView trainsPage, notificationPrompt, tableView, timePicked;
+    TextView tableView, timetableHeading;
     EditText addCustomStartLocation, addCustomEndLocation;
     TimePickerDialog timePickerDialog;
     DatePickerDialog datePickerDialog;
@@ -69,6 +69,7 @@ public class AddJourney extends FragmentActivity {
     public static String CONTENT_ID = "Tap to see your journeys";
     final static int RQS_1 = 1;
     private Integer delID;
+    private Integer isAlarmSet = 0;
     String timeFormatted;
     String dateFormatted;
 
@@ -84,12 +85,15 @@ public class AddJourney extends FragmentActivity {
         addCustomEndLocation = (EditText) findViewById(R.id.addCustomJourneyEndInput);
         notificationButton = (Button) findViewById(R.id.notification_button);
         tableView = (TextView) findViewById(R.id.tableView);
+        timetableHeading = (TextView) findViewById(R.id.timetable_heading);
+        showFullTable();
 
         final SharedPreferences myPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         if (myPrefs.contains("KEY_FORMATTED_TIME")) {
             timeFormatted = myPrefs.getString("KEY_FORMATTED_TIME", "");
         } else if (myPrefs.contains("KEY_FORMATTED_DATE")) {
             dateFormatted = myPrefs.getString("KEY_FORMATTED_DATE", "");
+            checkAlarmSet();
         }
         updateFromPreferences(myPrefs);
 
@@ -97,6 +101,7 @@ public class AddJourney extends FragmentActivity {
 
 
         timePickerButton = (Button) findViewById(R.id.timePickerButton);
+        //checkAlarmSet();
         timePickerButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -147,10 +152,10 @@ public class AddJourney extends FragmentActivity {
                         }, year, month, dayOfMonth);
                 datePickerDialog.show();
             } else {
-                    timeFormatted = myPrefs.getString("KEY_FORMATTED_TIME", "");
-                    dateFormatted = myPrefs.getString("KEY_FORMATTED_DATE", "");
+                    timeFormatted = myPrefs.getString("KEY_FORMATTED_TIME", "TIME_ERROR");
+                    dateFormatted = myPrefs.getString("KEY_FORMATTED_DATE", "DATE_ERROR");
                     timePickerButton.setText("Departure: " + dateFormatted + " @ " + timeFormatted);
-                    Toast toast = Toast.makeText(getApplicationContext(), "Only one alarm may be set at a time", Toast.LENGTH_SHORT);
+                    Toast toast = Toast.makeText(getApplicationContext(), "Only one alarm may be set at a time. This can be reset from the menu", Toast.LENGTH_LONG);
                     toast.show();
                 }
                 }
@@ -163,19 +168,20 @@ public class AddJourney extends FragmentActivity {
         addCustomJourney.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Check if the stations have been set
-                if (isAddJourneySet()) {
-                    // Check if the departure time has been set
-                    if (timeFormatted != null && dateFormatted != null) {
-                        addJourney(convert(addCustomStartLocation.getText().toString()), convert(addCustomEndLocation.getText().toString()), dateFormatted, timeFormatted);
-                        showFullTable();
-                        //buildSpinner();
-                    } else {
-                        Toast toast = Toast.makeText(getApplicationContext(), "Please fill in all fields", Toast.LENGTH_SHORT);
-                        toast.show();
+                    // Check if the stations have been set
+                    if (isAddJourneySet()) {
+                        // Check if the departure time has been set
+                        if (timeFormatted != null && dateFormatted != null) {
+                            addJourney(convert(addCustomStartLocation.getText().toString()), convert(addCustomEndLocation.getText().toString()), dateFormatted, timeFormatted);
+                            showFullTable();
+                            //buildSpinner();
+                        } else {
+                            Toast toast = Toast.makeText(getApplicationContext(), "Please fill in all fields", Toast.LENGTH_SHORT);
+                            toast.show();
+                        }
                     }
-                }
             }
+
         });
 
         notificationButton.setOnClickListener(new OnClickListener() {
@@ -185,13 +191,6 @@ public class AddJourney extends FragmentActivity {
             }
         });
 
-        Button buttonCancel = findViewById(R.id.button_cancel);
-        buttonCancel.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                cancelAlarm();
-            }
-        });
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -206,11 +205,26 @@ public class AddJourney extends FragmentActivity {
             case R.id.cancel_alarm:
                 cancelAlarm();
                 return true;
+
+            case R.id.settings:
+                navigateToView(Settings.class);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
+    private void checkAlarmSet() {
+        final SharedPreferences myPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        String time = myPrefs.getString("KEY_FORMATTED_TIME", "TIME_ERROR");
+        String date = myPrefs.getString("KEY_FORMATTED_DATE", "DATE_ERROR");
+            timePickerButton.setText("Departure: " + date + " @ " + time);
+            isAlarmSet = 1;
+            Toast toast = Toast.makeText(getApplicationContext(), "You already have an alarm set", Toast.LENGTH_SHORT);
+            toast.show();
+    }
+
+    // Used to schedule the alarm intent for the date & time selected
     private void startAlarm(Calendar calendar) {
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(AddJourney.this, AlarmReceiver.class);
@@ -219,6 +233,7 @@ public class AddJourney extends FragmentActivity {
         alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
     }
 
+    // Used to cancel the alarm and clear formatted date & time
     private void cancelAlarm() {
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, AlarmReceiver.class);
@@ -234,6 +249,7 @@ public class AddJourney extends FragmentActivity {
         timePickerButton.setText("Set Departure Date & Time");
     }
 
+    // Checks if a name is saved in the sharedPreferences and updates the variable TITLE_ID
     private void updateFromPreferences(SharedPreferences prefs) {
         String name = prefs.getString(Settings.KEY_NAME, "");
         if (!name.contentEquals("")) {
@@ -243,7 +259,7 @@ public class AddJourney extends FragmentActivity {
         }
     }
 
-    // creates the notification channel for newer versions of Android
+    // creates the notification channel for newer versions of Android (TESTING ONLY)
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = getString(R.string.channel_name);
@@ -258,7 +274,7 @@ public class AddJourney extends FragmentActivity {
         }
     }
 
-    // builds & sends notification
+    // builds & sends notification (TESTING ONLY)
     public void sendNotification() {
 
         Intent intent = new Intent(this, CheckTrains.class);
@@ -293,11 +309,11 @@ public class AddJourney extends FragmentActivity {
     // checks if all fields are filled out before adding to the database
     private boolean isAddJourneySet() {
         if (addCustomStartLocation.getText().toString().contentEquals("")) {
-            Toast toast = Toast.makeText(getApplicationContext(), "Please enter start station", Toast.LENGTH_SHORT);
+            Toast toast = Toast.makeText(getApplicationContext(), "Please enter a start station", Toast.LENGTH_SHORT);
             toast.show();
             return false;
         } else if (addCustomEndLocation.getText().toString().contentEquals("")) {
-            Toast toast = Toast.makeText(getApplicationContext(), "Please enter start and end stations", Toast.LENGTH_SHORT);
+            Toast toast = Toast.makeText(getApplicationContext(), "Please enter an end station", Toast.LENGTH_SHORT);
             toast.show();
             return false;
         }
@@ -337,6 +353,11 @@ public class AddJourney extends FragmentActivity {
         }
         String string = new String(ch);
         return string;
+    }
+
+    public void navigateToView(Class viewName) {
+        Intent intent = new Intent(getBaseContext(), viewName);
+        startActivity(intent);
     }
 }
 

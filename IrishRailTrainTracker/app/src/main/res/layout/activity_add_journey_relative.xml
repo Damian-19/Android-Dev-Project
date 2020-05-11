@@ -10,18 +10,11 @@
         android:layout_below="@+id/start_spinner"
         android:text="Send Test Notification"/>
 
-    <Button
-        android:id="@+id/button_cancel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Remove Current Alarm"
-        android:layout_below="@id/notification_button"/>
-
     <Space
         android:id="@+id/spacer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/button_cancel"/>
+        android:layout_below="@+id/notification_button"/>
     <LinearLayout
         android:id="@+id/addCustomJourneyContainer"
         android:layout_width="wrap_content"
@@ -76,7 +69,7 @@
             android:id="@+id/timePickerButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Set Departure Time"/>
+            android:text="Set Departure Date &amp; Time"/>
 
         <Button
             android:id="@+id/addCustomJourneyButton"
@@ -86,12 +79,50 @@
 
     </LinearLayout>
 
+    <Space
+        android:id="@+id/spacerTimetable"
+        android:layout_width="wrap_content"
+        android:layout_height="10dp"
+        android:layout_below="@+id/addCustomJourneyContainer2"/>
+
+    <View
+        android:id="@+id/horizontalRule"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/spacerTimetable"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:background="@android:color/darker_gray"/>
+
+    <Space
+        android:id="@+id/spacerTimetable1"
+        android:layout_width="wrap_content"
+        android:layout_height="10dp"
+        android:layout_below="@+id/horizontalRule" />
+
+    <TextView
+        android:id="@+id/timetable_heading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/spacerTimetable1"
+        android:layout_marginTop="4dp"
+        android:layout_marginStart="15dp"
+        android:text="Timetable"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5" />
+
+    <Space
+        android:id="@+id/spacerTimetable2"
+        android:layout_width="wrap_content"
+        android:layout_height="10dp"
+        android:layout_below="@+id/timetable_heading" />
 
     <TextView
         android:id="@+id/tableView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:freezesText="true"
-        android:layout_alignParentBottom="true"/>
+        android:layout_below="@+id/spacerTimetable2"
+        android:layout_centerHorizontal="true"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"/>
 
 </android.widget.RelativeLayout>

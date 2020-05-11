@@ -19,8 +19,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="ie.ul.traintracker.CheckTrains"/>
-        <activity android:name="ie.ul.traintracker.AddJourney"/>
+        <activity android:name="ie.ul.traintracker.CheckTrains"
+            android:label="Check the Trains"/>
+        <activity android:name="ie.ul.traintracker.AddJourney"
+            android:label="Your Journeys"/>
         <activity android:name="ie.ul.traintracker.Settings"
             android:label="Settings"/>
         <receiver
