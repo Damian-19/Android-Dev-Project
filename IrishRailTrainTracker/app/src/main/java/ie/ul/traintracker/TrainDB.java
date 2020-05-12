@@ -18,17 +18,17 @@ public class TrainDB{
     //Index column
     public static final String KEY_ID = "_id";
 
-    // timetable
-    public static final String KEY_JOURNEY_START = "journey_start";
-    public static final String KEY_JOURNEY_END = "journey_end";
-    public static final String KEY_DEPARTURE_DATE = "departure_date";
-    public static final String KEY_DEPARTURE_TIME = "departure_time";
+    // timetable entries
+    public static final String KEY_JOURNEY_START = "journey_start"; //start station
+    public static final String KEY_JOURNEY_END = "journey_end"; //end station
+    public static final String KEY_DEPARTURE_DATE = "departure_date"; //date of departure
+    public static final String KEY_DEPARTURE_TIME = "departure_time"; //time of departure
 
-    //user journeys
-    public static final String KEY_CUSTOM_JOURNEY_START_LOCATION = "custom_journey_start_location";
-    public static final String KEY_CUSTOM_JOURNEY_END_LOCATION = "custom_journey_end_location";
-    public static final String KEY_CUSTOM_DEPARTURE_DATE = "custom_departure_date";
-    public static final String KEY_CUSTOM_DEPARTURE_TIME = "custom_departure_time";
+    //custom journey entries
+    public static final String KEY_CUSTOM_JOURNEY_START_LOCATION = "custom_journey_start_location"; //start station
+    public static final String KEY_CUSTOM_JOURNEY_END_LOCATION = "custom_journey_end_location"; //end station
+    public static final String KEY_CUSTOM_DEPARTURE_DATE = "custom_departure_date"; //date of departure
+    public static final String KEY_CUSTOM_DEPARTURE_TIME = "custom_departure_time"; //time of departure
 
     private Context context;
 
@@ -54,13 +54,15 @@ public class TrainDB{
             this.addRowTimetable("Killarney", "Cork", "15/09/2020", "09:00");
             this.addRowTimetable("Westport", "Sligo", "18/11/2020", "15:00");
             this.addRowTimetable("Carlow", "Waterford", "15/02/2021", "17:00");
-            // populate custom journeys table
+            // populate custom journeys table (remove for final version)
             this.addRowCustomJourney("Dublin", "Limerick", "10/05/2020", "10:00");
             this.addRowCustomJourney("Tralee", "Cork", "12/05/2020", "14:00");
         }
     }
 
-    // Database methods
+    /***************************
+     * Database methods
+     **************************/
 
     // Called to close the database
     public void closeDatabase() {

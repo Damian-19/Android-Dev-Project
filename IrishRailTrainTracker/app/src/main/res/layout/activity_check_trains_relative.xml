@@ -72,5 +72,13 @@
                 android:text="@string/search" />
 
         </LinearLayout>
+
+        <Button
+            android:id="@+id/showFullDatabase"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/findJourneyStartFromContainer1"
+            android:text="Show Full Timetable"/>
+
     </RelativeLayout>
 </android.widget.RelativeLayout>

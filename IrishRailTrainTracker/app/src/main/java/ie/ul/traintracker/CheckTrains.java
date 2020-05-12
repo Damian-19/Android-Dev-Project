@@ -11,6 +11,7 @@ import android.app.TimePickerDialog.OnTimeSetListener;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Build;
 import android.os.Bundle;
@@ -43,9 +44,9 @@ import java.util.TimeZone;
 public class CheckTrains extends Activity {
 
     TextView dbView;
-    String[] journeyStart, journeyEnd, departureTime;
-    Button searchStartButton;
-    EditText chosenStartStationField, chosenDepartureTime;
+    String savedStartStation, savedEndStation;
+    Button searchStartButton, showFullTimetable;
+    EditText chosenStartStationField, chosenDepartureStation;
 
     TrainDB trainDB;
 
@@ -58,16 +59,30 @@ public class CheckTrains extends Activity {
         trainDB = new TrainDB(getApplicationContext());
         searchStartButton = (Button) findViewById(R.id.findStartStationsButton);
         chosenStartStationField = (EditText) findViewById(R.id.chosenStartStation);
-        chosenDepartureTime = (EditText) findViewById(R.id.chosenDepartureStation);
+        chosenDepartureStation = (EditText) findViewById(R.id.chosenDepartureStation);
+        showFullTimetable = (Button) findViewById(R.id.showFullDatabase);
         showFullTable();
+
+        final SharedPreferences myPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        if (myPrefs.contains("KEY_START_STATION_SEARCH") && myPrefs.contains("KEY_END_STATION_SEARCH")) {
+            readInput();
+        }
 
 
         searchStartButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (isStartSearchSet()) {
-                    showStartStationSearch(chosenStartStationField.getText().toString(), chosenDepartureTime.getText().toString());
+                    showStartStationSearch(chosenStartStationField.getText().toString(), chosenDepartureStation.getText().toString());
+                    saveInput();
                 }
+            }
+        });
+
+        showFullTimetable.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showFullTable();
             }
         });
 
@@ -86,13 +101,28 @@ public class CheckTrains extends Activity {
         print(trainDB.getAllTimetable());
     }
 
+    private void saveInput() {
+        final Editor prefEditor = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
+        prefEditor.putString("KEY_START_STATION_SEARCH", chosenStartStationField.getText().toString());
+        prefEditor.putString("KEY_END_STATION_SEARCH", chosenDepartureStation.getText().toString());
+        prefEditor.apply();
+    }
+
+    private void readInput() {
+        final SharedPreferences myPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        savedStartStation = myPrefs.getString("KEY_START_STATION_SEARCH", "START_ERROR");
+        savedEndStation = myPrefs.getString("KEY_END_STATION_SEARCH", "END_ERROR");
+        chosenStartStationField.setText(savedStartStation);
+        chosenDepartureStation.setText(savedEndStation);
+    }
+
     private void showStartStationSearch(String journeyStartLocation, String journeyDepartureTime) {
         print(trainDB.getJourney(journeyStartLocation, journeyDepartureTime));
     }
 
     private boolean isStartSearchSet() {
         if (chosenStartStationField.getText().toString().contentEquals("") ||
-                chosenDepartureTime.getText().toString().contentEquals("")) {
+                chosenDepartureStation.getText().toString().contentEquals("")) {
             Toast toast = Toast.makeText(getApplicationContext(),"Please enter start and end stations.",Toast.LENGTH_SHORT);
             toast.show();
             return false;
