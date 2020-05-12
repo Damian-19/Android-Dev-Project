@@ -61,7 +61,6 @@ public class CheckTrains extends Activity {
         chosenStartStationField = (EditText) findViewById(R.id.chosenStartStation);
         chosenDepartureStation = (EditText) findViewById(R.id.chosenDepartureStation);
         showFullTimetable = (Button) findViewById(R.id.showFullDatabase);
-        showFullTable();
 
         final SharedPreferences myPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         if (myPrefs.contains("KEY_START_STATION_SEARCH") && myPrefs.contains("KEY_END_STATION_SEARCH")) {
@@ -75,6 +74,10 @@ public class CheckTrains extends Activity {
                 if (isStartSearchSet()) {
                     showStartStationSearch(chosenStartStationField.getText().toString(), chosenDepartureStation.getText().toString());
                     saveInput();
+                }
+                if (dbView.getText().toString().isEmpty()) {
+                    Toast toast = Toast.makeText(getApplicationContext(), "No journeys found", Toast.LENGTH_SHORT);
+                    toast.show();
                 }
             }
         });

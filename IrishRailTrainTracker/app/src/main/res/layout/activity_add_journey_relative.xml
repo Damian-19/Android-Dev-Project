@@ -106,8 +106,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/spacerTimetable1"
         android:layout_marginTop="4dp"
-        android:layout_marginStart="15dp"
-        android:text="Timetable"
+        android:layout_marginStart="35dp"
+        android:text="Your Journeys"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5" />
 
     <Space

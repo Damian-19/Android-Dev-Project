@@ -25,10 +25,14 @@
             android:label="Your Journeys"/>
         <activity android:name="ie.ul.traintracker.Settings"
             android:label="Settings"/>
+        <activity android:name="ie.ul.traintracker.Help"
+            android:label="Help" />
         <receiver
             android:name="ie.ul.traintracker.AlarmReceiver" android:enabled="true">
+        </receiver>
+        <receiver android:name="ie.ul.traintracker.BootReceiver" android:enabled="true" >
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
     </application>

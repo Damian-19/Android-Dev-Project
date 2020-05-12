@@ -49,7 +49,7 @@ import java.util.TimeZone;
 
 @SuppressWarnings("deprecation")
 
-public class AddJourney extends FragmentActivity {
+public class AddJourney extends Activity {
 
     public static final String CHANNEL_ID = "1001";
     final Calendar calendar = Calendar.getInstance();
@@ -65,12 +65,12 @@ public class AddJourney extends FragmentActivity {
 
     private static final String KEY_SAVED_TIME = "saved_time";
     private static final String KEY_SAVED_DATE = "saved_date";
-    public static String TITLE_ID = "Title";
+    public static String TITLE_ID = "Journey Reminder";
     public static String CONTENT_ID = "Tap to see your journeys";
     final static int RQS_1 = 1;
     private Integer delID;
     private Integer isAlarmSet = 0;
-    String timeFormatted;
+    public static String timeFormatted;
     String dateFormatted;
 
     TrainDB trainDB;
@@ -89,19 +89,13 @@ public class AddJourney extends FragmentActivity {
         showFullTable();
 
         final SharedPreferences myPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        if (myPrefs.contains("KEY_FORMATTED_TIME")) {
-            timeFormatted = myPrefs.getString("KEY_FORMATTED_TIME", "");
-        } else if (myPrefs.contains("KEY_FORMATTED_DATE")) {
-            dateFormatted = myPrefs.getString("KEY_FORMATTED_DATE", "");
-            checkAlarmSet();
-        }
         updateFromPreferences(myPrefs);
 
         final Editor prefEditor = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
 
 
         timePickerButton = (Button) findViewById(R.id.timePickerButton);
-        //checkAlarmSet();
+        checkAlarmSet();
         timePickerButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -194,7 +188,7 @@ public class AddJourney extends FragmentActivity {
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_menu, menu);
+        getMenuInflater().inflate(R.menu.custom_menu, menu);
         return true;
     }
 
@@ -209,6 +203,9 @@ public class AddJourney extends FragmentActivity {
             case R.id.settings:
                 navigateToView(Settings.class);
                 return true;
+
+            case R.id.help:
+                navigateToView(Help.class);
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -216,12 +213,14 @@ public class AddJourney extends FragmentActivity {
 
     private void checkAlarmSet() {
         final SharedPreferences myPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        String time = myPrefs.getString("KEY_FORMATTED_TIME", "TIME_ERROR");
-        String date = myPrefs.getString("KEY_FORMATTED_DATE", "DATE_ERROR");
-            timePickerButton.setText("Departure: " + date + " @ " + time);
+        if (myPrefs.contains("KEY_FORMATTED_TIME") && myPrefs.contains("KEY_FORMATTED_DATE")) {
+            String time = myPrefs.getString("KEY_FORMATTED_TIME", "TIME_ERROR");
+            String date = myPrefs.getString("KEY_FORMATTED_DATE", "DATE_ERROR");
+            timePickerButton.setText("Alarm Set: " + date + " @ " + time);
             isAlarmSet = 1;
             Toast toast = Toast.makeText(getApplicationContext(), "You already have an alarm set", Toast.LENGTH_SHORT);
             toast.show();
+        }
     }
 
     // Used to schedule the alarm intent for the date & time selected
@@ -234,7 +233,7 @@ public class AddJourney extends FragmentActivity {
     }
 
     // Used to cancel the alarm and clear formatted date & time
-    private void cancelAlarm() {
+    public void cancelAlarm() {
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, AlarmReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0);

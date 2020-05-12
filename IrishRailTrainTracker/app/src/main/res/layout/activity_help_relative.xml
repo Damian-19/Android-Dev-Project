@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.widget.RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:layout_margin="20dp">
+
+    <TextView
+        android:id="@+id/howAddJourneyHeading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="How do I add a journey?"
+        android:layout_alignParentStart="true"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6" />
+    <TextView
+        android:id="@+id/howAddJourneyContent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="To add a custom journey, you must first enter the station your journey starts from, and the station your journey ends at. You must then select the date and time your train departs the start station. Finally, use the Add Journey button to save your journey."
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+        android:layout_below="@+id/howAddJourneyHeading" />
+
+</android.widget.RelativeLayout>
