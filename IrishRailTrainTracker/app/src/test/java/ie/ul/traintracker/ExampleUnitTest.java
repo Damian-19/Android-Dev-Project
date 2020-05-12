@@ -1,4 +1,4 @@
-package com.example.traintracker;
+package ie.ul.traintracker;
 
 import org.junit.Test;
 

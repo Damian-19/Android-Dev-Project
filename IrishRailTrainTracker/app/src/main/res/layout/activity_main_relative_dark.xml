@@ -214,7 +214,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/journeyTable"
         android:layout_above="@id/info"
-        android:src="@drawable/intercity_map" />
+        android:src="@drawable/intercity_map"
+        android:contentDescription="TODO" />
 
 
 </RelativeLayout>

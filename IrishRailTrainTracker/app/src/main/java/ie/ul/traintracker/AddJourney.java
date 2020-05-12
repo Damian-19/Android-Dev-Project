@@ -36,6 +36,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.work.impl.model.Preference;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -55,8 +56,9 @@ public class AddJourney extends Activity {
     final Calendar calendar = Calendar.getInstance();
 
 
-    TextView tableView, timetableHeading;
+    TextView tableView;
     EditText addCustomStartLocation, addCustomEndLocation;
+    Spinner reminderSpinner;
     TimePickerDialog timePickerDialog;
     DatePickerDialog datePickerDialog;
     String[] customJourney;
@@ -70,6 +72,9 @@ public class AddJourney extends Activity {
     final static int RQS_1 = 1;
     private Integer delID;
     private Integer isAlarmSet = 0;
+    private Integer timeBefore = null;
+    private Integer timeSet = null;
+    Integer savedPosition;
     public static String timeFormatted;
     String dateFormatted;
 
@@ -81,74 +86,133 @@ public class AddJourney extends Activity {
         setContentView(R.layout.activity_add_journey_relative);
 
         trainDB = new TrainDB(getApplicationContext());
-        addCustomStartLocation = (EditText) findViewById(R.id.addCustomJourneyStartInput);
-        addCustomEndLocation = (EditText) findViewById(R.id.addCustomJourneyEndInput);
-        notificationButton = (Button) findViewById(R.id.notification_button);
-        tableView = (TextView) findViewById(R.id.tableView);
-        timetableHeading = (TextView) findViewById(R.id.timetable_heading);
-        showFullTable();
+        addCustomStartLocation = findViewById(R.id.addCustomJourneyStartInput);
+        addCustomEndLocation = findViewById(R.id.addCustomJourneyEndInput);
+        notificationButton = findViewById(R.id.notification_button);
+        tableView = findViewById(R.id.tableView);
 
         final SharedPreferences myPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         updateFromPreferences(myPrefs);
 
+
         final Editor prefEditor = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
+        showFullTable();
+
+        reminderSpinner = findViewById(R.id.reminderSpinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.reminderSpinnerArray, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        reminderSpinner.setAdapter(adapter);
+        if (myPrefs.contains("KEY_SPINNER_SELECTED")) {
+            savedPosition = myPrefs.getInt("KEY_SPINNER_SELECTED", 0);
+            reminderSpinner.setSelection(savedPosition);
+        }
+        reminderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (timeFormatted == null || dateFormatted == null) {
+                    timeBefore = (int) parent.getItemIdAtPosition(position);
+                } else if (timeFormatted != null && dateFormatted != null){
+                    reminderSpinner.setSelection(0);
+                    Toast toast = Toast.makeText(getApplicationContext(), "You have already set a reminder. Selection not set", Toast.LENGTH_LONG);
+                    toast.show();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                timeBefore = null;
+
+            }
+        });
 
 
-        timePickerButton = (Button) findViewById(R.id.timePickerButton);
+        timePickerButton = findViewById(R.id.timePickerButton);
         checkAlarmSet();
         timePickerButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (timeFormatted == null && dateFormatted == null) {
+                    if (timeBefore == 0) {
+                        timeBefore = null;
+                        timeSet = null;
+                        Toast toast = Toast.makeText(getBaseContext(), "Please select an option", Toast.LENGTH_SHORT);
+                        toast.show();
+                    } else if (timeBefore == 1) {
+                        timeSet = 10;
+                    } else if (timeBefore == 2) {
+                        timeSet = 20;
+                    } else if (timeBefore == 3) {
+                        timeSet = 30;
+                    } else if (timeBefore == 4) {
+                        timeSet = 45;
+                    } else if (timeBefore == 5) {
+                        timeSet = 60;
+                    } else {
+                        timeSet = 30;
+                    }
+                    if (timeBefore != null || timeSet != null) {
 
-                //time picker
-                final Calendar calendar = Calendar.getInstance();
-                int hour = calendar.get(Calendar.HOUR_OF_DAY);
-                int minute = calendar.get(Calendar.MINUTE);
-                final int year = calendar.get(Calendar.YEAR);
-                final int month = calendar.get(Calendar.MONTH);
-                final int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+                        //time picker
+                        final Calendar calendar = Calendar.getInstance();
+                        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                        int minute = calendar.get(Calendar.MINUTE);
+                        final int year = calendar.get(Calendar.YEAR);
+                        final int month = calendar.get(Calendar.MONTH);
+                        final int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
 
-                TimePickerDialog timePickerDialog = new TimePickerDialog(AddJourney.this,
-                        new TimePickerDialog.OnTimeSetListener() {
-                            @Override
-                            public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
-                                calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                                calendar.set(Calendar.MINUTE, minute);
-                                calendar.set(Calendar.SECOND, 0);
-                                timePickerButton.setText("Departure: " + dayOfMonth + "/" + month + "/" + year + " @ " + addLeadingZero(hourOfDay) + ":" + addLeadingZero(minute));
-                                int time  = (minute * 60 + (hourOfDay -1) * 60 * 60) * 1000;
-                                SimpleDateFormat format = new SimpleDateFormat("HH:mm");
-                                timeFormatted = format.format(time);
-                                prefEditor.putString("KEY_FORMATTED_TIME", timeFormatted);
-                                prefEditor.apply();
+                        TimePickerDialog timePickerDialog = new TimePickerDialog(AddJourney.this,
+                                new TimePickerDialog.OnTimeSetListener() {
+                                    @Override
+                                    public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
+                                        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                                        calendar.set(Calendar.MINUTE, minute);
+                                        calendar.set(Calendar.SECOND, 0);
 
-                                startAlarm(calendar);
-                            }
-                        }, hour, minute, true);
-                timePickerDialog.show();
 
-                // date picker
 
-                DatePickerDialog datePickerDialog = new DatePickerDialog(AddJourney.this,
-                        new DatePickerDialog.OnDateSetListener() {
-                            @Override
-                            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                                calendar.set(Calendar.YEAR, year);
-                                calendar.set(Calendar.MONTH, month);
-                                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                                int date = (dayOfMonth + month + year);
-                                SimpleDateFormat format = new SimpleDateFormat("DD/MM/YYYY");
-                                dateFormatted = dayOfMonth + "/" + month + "/" + year;
-                                prefEditor.putString("KEY_FORMATTED_DATE", dateFormatted);
-                                prefEditor.apply();
-                            }
-                        }, year, month, dayOfMonth);
-                datePickerDialog.show();
+                                        if (timeSet != null) {
+                                            timePickerButton.setText("Alarm Set: " + dayOfMonth + "/" + month + "/" + year + " @ " + addLeadingZero(hourOfDay) + ":" + addLeadingZero(minute));
+                                            int time = (minute * 60 + (hourOfDay - 1) * 60 * 60) * 1000;
+                                            SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+                                            timeFormatted = format.format(time);
+                                            prefEditor.putString("KEY_FORMATTED_TIME", timeFormatted);
+                                            prefEditor.apply();
+
+                                            startAlarm(calendar);
+                                        } else {
+                                            Toast toast = Toast.makeText(getApplicationContext(), "Please select an option", Toast.LENGTH_SHORT);
+                                            toast.show();
+                                        }
+                                    }
+                                }, hour, minute, true);
+                        timePickerDialog.show();
+
+                        // date picker
+
+                        DatePickerDialog datePickerDialog = new DatePickerDialog(AddJourney.this,
+                                new DatePickerDialog.OnDateSetListener() {
+                                    @Override
+                                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                                        calendar.set(Calendar.YEAR, year);
+                                        calendar.set(Calendar.MONTH, month);
+                                        calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                                        int date = (dayOfMonth + month + year);
+                                        SimpleDateFormat format = new SimpleDateFormat("DD/MM/YYYY");
+                                        dateFormatted = dayOfMonth + "/" + month + "/" + year;
+                                        prefEditor.putString("KEY_FORMATTED_DATE", dateFormatted);
+                                        prefEditor.apply();
+                                    }
+                                }, year, month, dayOfMonth);
+                        datePickerDialog.show();
+                    } else if (timeBefore == null || timeSet == null) {
+                        Toast toast = Toast.makeText(getApplicationContext(), "Please select an option", Toast.LENGTH_LONG);
+                        toast.show();
+                    }
             } else {
                     timeFormatted = myPrefs.getString("KEY_FORMATTED_TIME", "TIME_ERROR");
                     dateFormatted = myPrefs.getString("KEY_FORMATTED_DATE", "DATE_ERROR");
-                    timePickerButton.setText("Departure: " + dateFormatted + " @ " + timeFormatted);
+                    timePickerButton.setText("Alarm Set: " + dateFormatted + " @ " + timeFormatted);
                     Toast toast = Toast.makeText(getApplicationContext(), "Only one alarm may be set at a time. This can be reset from the menu", Toast.LENGTH_LONG);
                     toast.show();
                 }
@@ -158,7 +222,7 @@ public class AddJourney extends Activity {
 
 
 
-        addCustomJourney = (Button) findViewById(R.id.addCustomJourneyButton);
+        addCustomJourney = findViewById(R.id.addCustomJourneyButton);
         addCustomJourney.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -186,6 +250,12 @@ public class AddJourney extends Activity {
         });
 
     }
+
+
+    /****************
+     * END onCreate()
+     *****************/
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.custom_menu, menu);
@@ -200,12 +270,17 @@ public class AddJourney extends Activity {
                 cancelAlarm();
                 return true;
 
+            /*case R.id.remove_all_custom:
+                deleteAll();
+                return true;*/
+
             case R.id.settings:
                 navigateToView(Settings.class);
                 return true;
 
             case R.id.help:
                 navigateToView(Help.class);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -228,8 +303,11 @@ public class AddJourney extends Activity {
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(AddJourney.this, AlarmReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
+        Editor prefEditor = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
 
-        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, (calendar.getTimeInMillis() - timeSet * 60 * 1000), pendingIntent);
+        prefEditor.putInt("KEY_SPINNER_SELECTED", timeBefore);
+        prefEditor.apply();
     }
 
     // Used to cancel the alarm and clear formatted date & time
@@ -324,8 +402,8 @@ public class AddJourney extends Activity {
         trainDB.addRowCustomJourney(journeyStart, journeyEnd, dateFormatted,  timeFormatted);
     }
 
-    private void deleteJourney(int index) {
-        trainDB.deleteRowTimetable(index);
+    private void deleteAll() {
+        trainDB.deleteAllCustom();
     }
 
     // Adds a leading zero if less than 10
@@ -333,14 +411,14 @@ public class AddJourney extends Activity {
         if (input >= 10) {
             return String.valueOf(input);
         } else {
-            return "0" + String.valueOf(input);
+            return "0" + input;
         }
     }
 
     // Converts first letter of input to uppercase if is lowercase
     // Adapted from www.geeksforgeeks.org/java-program-convert-first-character-uppercase-sentence/
     static String convert( String input) {
-        char ch[] = input.toCharArray();
+        char[] ch = input.toCharArray();
         for (int i=0; i<input.length(); i++) {
             if (i == 0 && ch[i] != ' ' || ch[i] != ' ' && ch[i - 1] == ' ') {
                 if (ch[i] >= 'a' && ch[i] <= 'z') {

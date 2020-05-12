@@ -18,4 +18,12 @@
     <string name="search">Search</string>
     <string name="find_journey_end">"End Station: "</string>
     <string name="add_journey">Add Journey</string>
+    <string-array name="reminderSpinnerArray">
+        <item>Add Notification</item>
+        <item>10 mins before</item>
+        <item>20 mins before</item>
+        <item>30 mins before</item>
+        <item>45 mins before</item>
+        <item>1 hour before</item>
+    </string-array>
 </resources>

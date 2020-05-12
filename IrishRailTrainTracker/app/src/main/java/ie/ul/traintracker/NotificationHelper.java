@@ -18,7 +18,7 @@ import androidx.work.impl.model.Preference;
 import static ie.ul.traintracker.AddJourney.TITLE_ID;
 import static ie.ul.traintracker.AddJourney.CONTENT_ID;
 
-
+@SuppressWarnings("deprecation")
 public class NotificationHelper extends ContextWrapper {
     public static final String channelID = "channelID";
     public static final String channelName = "Journey Reminders";

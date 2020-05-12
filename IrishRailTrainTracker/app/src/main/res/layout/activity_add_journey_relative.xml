@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.widget.RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent" android:layout_height="match_parent"
     android:theme="@style/Theme.AppCompat.Light">
 
@@ -33,7 +34,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="10"
             android:ems="10"
-            android:inputType="text" />
+            android:inputType="text"
+            tools:ignore="LabelFor" />
 
     </LinearLayout>
     <LinearLayout
@@ -54,7 +56,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="10"
             android:ems="10"
-            android:inputType="text" />
+            android:inputType="text"
+            tools:ignore="LabelFor" />
 
     </LinearLayout>
     <LinearLayout
@@ -65,11 +68,23 @@
         android:layout_below="@id/addCustomJourneyContainer1"
         android:layout_centerVertical="true">
 
+        <LinearLayout
+            android:id="@+id/addCustomJourneyTimeAndDateContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
         <Button
             android:id="@+id/timePickerButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Set Departure Date &amp; Time"/>
+
+        <Spinner
+            android:id="@+id/reminderSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
 
         <Button
             android:id="@+id/addCustomJourneyButton"
@@ -97,31 +112,14 @@
     <Space
         android:id="@+id/spacerTimetable1"
         android:layout_width="wrap_content"
-        android:layout_height="10dp"
+        android:layout_height="20dp"
         android:layout_below="@+id/horizontalRule" />
-
-    <TextView
-        android:id="@+id/timetable_heading"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/spacerTimetable1"
-        android:layout_marginTop="4dp"
-        android:layout_marginStart="35dp"
-        android:text="Your Journeys"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5" />
-
-    <Space
-        android:id="@+id/spacerTimetable2"
-        android:layout_width="wrap_content"
-        android:layout_height="10dp"
-        android:layout_below="@+id/timetable_heading" />
 
     <TextView
         android:id="@+id/tableView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:freezesText="true"
-        android:layout_below="@+id/spacerTimetable2"
+        android:layout_below="@+id/spacerTimetable1"
         android:layout_centerHorizontal="true"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"/>
 

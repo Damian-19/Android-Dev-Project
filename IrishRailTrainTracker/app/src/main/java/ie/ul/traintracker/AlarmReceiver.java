@@ -13,7 +13,6 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 
-@SuppressWarnings("deprecation")
 public class AlarmReceiver extends BroadcastReceiver {
 
 

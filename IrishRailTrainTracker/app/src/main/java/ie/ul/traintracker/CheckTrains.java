@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
@@ -55,12 +56,12 @@ public class CheckTrains extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_check_trains_relative);
 
-        dbView = (TextView) findViewById(R.id.dbcontent);
+        dbView = findViewById(R.id.dbcontent);
         trainDB = new TrainDB(getApplicationContext());
-        searchStartButton = (Button) findViewById(R.id.findStartStationsButton);
-        chosenStartStationField = (EditText) findViewById(R.id.chosenStartStation);
-        chosenDepartureStation = (EditText) findViewById(R.id.chosenDepartureStation);
-        showFullTimetable = (Button) findViewById(R.id.showFullDatabase);
+        searchStartButton = findViewById(R.id.findStartStationsButton);
+        chosenStartStationField = findViewById(R.id.chosenStartStation);
+        chosenDepartureStation = findViewById(R.id.chosenDepartureStation);
+        showFullTimetable = findViewById(R.id.showFullDatabase);
 
         final SharedPreferences myPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         if (myPrefs.contains("KEY_START_STATION_SEARCH") && myPrefs.contains("KEY_END_STATION_SEARCH")) {
@@ -78,6 +79,13 @@ public class CheckTrains extends Activity {
                 if (dbView.getText().toString().isEmpty()) {
                     Toast toast = Toast.makeText(getApplicationContext(), "No journeys found", Toast.LENGTH_SHORT);
                     toast.show();
+                }
+                // close the virtual keyboard
+                try  {
+                    InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                } catch (Exception e) {
+
                 }
             }
         });

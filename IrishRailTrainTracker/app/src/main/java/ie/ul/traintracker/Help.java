@@ -14,7 +14,7 @@ public class Help extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_help_relative);
 
-        howAddJourneyHeading = (TextView) findViewById(R.id.howAddJourneyHeading);
-        howAddJourneyContent = (TextView) findViewById(R.id.howAddJourneyContent);
+        howAddJourneyHeading = findViewById(R.id.howAddJourneyHeading);
+        howAddJourneyContent = findViewById(R.id.howAddJourneyContent);
     }
 }

@@ -19,7 +19,7 @@ public class Settings extends PreferenceActivity {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preference_settings);
 
-        ToggleButton toggleButton = (ToggleButton) findViewById(R.id.dark_mode);
+        ToggleButton toggleButton = findViewById(R.id.dark_mode);
 
 
 

@@ -65,9 +65,9 @@ public class MainActivity extends Activity {
         mAdView.loadAd(adRequest);
 
 
-        checkTrains = (Button) findViewById(R.id.checkTrains);
-        addJourney = (Button) findViewById(R.id.addJourney);
-        welcomeText = (TextView) findViewById(R.id.welcome_text);
+        checkTrains = findViewById(R.id.checkTrains);
+        addJourney = findViewById(R.id.addJourney);
+        welcomeText = findViewById(R.id.welcome_text);
         updateFromPreferences(myPrefs);
 
         checkTrains.setOnClickListener(new View.OnClickListener() {

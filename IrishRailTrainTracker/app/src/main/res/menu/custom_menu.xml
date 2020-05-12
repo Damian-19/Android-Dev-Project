@@ -2,6 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:id="@+id/cancel_alarm" android:title="Remove Current Alarm" />
+    <item android:id="@+id/remove_all_custom" android:title="Remove All Journeys" />
     <item android:id="@+id/settings" android:title="Settings" />
     <item android:id="@+id/help" android:title="Help" />
 

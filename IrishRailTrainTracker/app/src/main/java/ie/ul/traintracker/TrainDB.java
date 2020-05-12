@@ -98,7 +98,7 @@ public class TrainDB{
         db.insert(ModuleDBOpenHelper.CUSTOM_JOURNEY_TABLE, null, contentValues);
     }
 
-    // Delete a row from the timetable table
+    // Delete a row from the timetable table (not used)
     public void deleteRowTimetable(int index) {
         // where clause to determine which rows to delete
         String where = KEY_ID + "=" + index;
@@ -109,7 +109,7 @@ public class TrainDB{
         db.delete(ModuleDBOpenHelper.TIMETABLE_TABLE, where, whereArgs);
     }
 
-    // Delete row from the custom journeys table
+    // Delete row from the custom journeys table (not implemented)
     public void deleteRowCustom(Integer index) {
         String where = KEY_ID + "= ?";
         String[] whereArgs = new String[]{index.toString()};
@@ -118,12 +118,19 @@ public class TrainDB{
         db.delete(ModuleDBOpenHelper.CUSTOM_JOURNEY_TABLE, where, whereArgs);
     }
 
+    // Delete all entries from the timetable table (not used)
     public void deleteAll() {
         String where = null;
-        String whereArgs[] = null;
+        String[] whereArgs = null;
 
         SQLiteDatabase db = moduleDBOpenHelper.getWritableDatabase();
         db.delete(ModuleDBOpenHelper.TIMETABLE_TABLE, where, whereArgs);
+    }
+
+    public void deleteAllCustom() {
+        SQLiteDatabase db = moduleDBOpenHelper.getWritableDatabase();
+        db.execSQL("DROP TABLE IF EXISTS " + ModuleDBOpenHelper.CUSTOM_JOURNEY_TABLE);
+        db.execSQL(ModuleDBOpenHelper.CUSTOM_JOURNEY_CREATE);
     }
 
     /****************************************
@@ -137,7 +144,7 @@ public class TrainDB{
 
         String journeyStart, journeyEnd, departureDate, departureTime;
         String where = null;
-        String whereArgs[] = null;
+        String[] whereArgs = null;
         String groupBy = null;
         String having = null;
         String order = null;
@@ -166,7 +173,7 @@ public class TrainDB{
 
         String customJourneyStart, customJourneyEnd, customDepartureTime, customDepartureDate;
         String where = null;
-        String whereArgs[] = null;
+        String[] whereArgs = null;
         String groupBy = null;
         String having = null;
         String order = null;
@@ -198,7 +205,7 @@ public class TrainDB{
 
         String journeyStart;
         String where = null;
-        String whereArgs[] = null;
+        String[] whereArgs = null;
         String groupBy = null;
         String having = null;
         String order = null;
@@ -228,7 +235,7 @@ public class TrainDB{
         String journeyStart, journeyEnd, departureDate, departureTime;
 
         String where = KEY_JOURNEY_START + "= ? AND " + KEY_JOURNEY_END + "= ?";
-        String whereArgs[] = {journeyStartLocation.toString(), journeyDepartureTime.toString()};
+        String[] whereArgs = {journeyStartLocation, journeyDepartureTime};
         String groupBy = null;
         String having = null;
         String order = null;
@@ -261,7 +268,7 @@ public class TrainDB{
 
         String journeyEnd;
         String where = null;
-        String whereArgs[] = null;
+        String[] whereArgs = null;
         String groupBy = null;
         String having = null;
         String order = null;
@@ -290,7 +297,7 @@ public class TrainDB{
 
         String departureTime;
         String where = null;
-        String whereArgs[] = null;
+        String[] whereArgs = null;
         String groupBy = null;
         String having = null;
         String order = null;
@@ -313,7 +320,7 @@ public class TrainDB{
         private static final String DATABASE_NAME = "TrainDB.db";
         private static final String TIMETABLE_TABLE = "Trains";
         private static final String CUSTOM_JOURNEY_TABLE = "Journeys";
-        private static final int DATABASE_VERSION= 15;
+        private static final int DATABASE_VERSION= 19;
 
         // create database (collate nocase used to ignore case for queries)
         // create timetable table
