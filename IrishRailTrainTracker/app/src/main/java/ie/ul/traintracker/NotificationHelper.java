@@ -19,6 +19,7 @@ import static ie.ul.traintracker.AddJourney.TITLE_ID;
 import static ie.ul.traintracker.AddJourney.CONTENT_ID;
 
 @SuppressWarnings("deprecation")
+// Adapted from https://stackoverflow.com/a/52637638
 public class NotificationHelper extends ContextWrapper {
     public static final String channelID = "channelID";
     public static final String channelName = "Journey Reminders";

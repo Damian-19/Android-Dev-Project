@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.method.ScrollingMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -65,6 +66,7 @@ public class AddJourney extends Activity {
         addCustomStartLocation = findViewById(R.id.addCustomJourneyStartInput);
         addCustomEndLocation = findViewById(R.id.addCustomJourneyEndInput);
         tableView = findViewById(R.id.tableView);
+        tableView.setMovementMethod(new ScrollingMovementMethod());
 
         final SharedPreferences myPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         updateFromPreferences(myPrefs);
