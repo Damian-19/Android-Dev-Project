@@ -2,20 +2,13 @@ package ie.ul.traintracker;
 
 import android.app.Activity;
 import android.app.AlarmManager;
-import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TimePickerDialog;
-import android.app.TimePickerDialog.OnTimeSetListener;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.database.Cursor;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.Menu;
@@ -32,21 +25,8 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.work.impl.model.Preference;
-
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Locale;
-import java.util.SimpleTimeZone;
-import java.util.TimeZone;
 
 @SuppressWarnings("deprecation")
 
@@ -59,10 +39,6 @@ public class AddJourney extends Activity {
     TextView tableView;
     EditText addCustomStartLocation, addCustomEndLocation;
     Spinner reminderSpinner;
-    TimePickerDialog timePickerDialog;
-    DatePickerDialog datePickerDialog;
-    String[] customJourney;
-    TimePicker timePicker;
     Button notificationButton, setDate, addCustomJourney, timePickerButton;
 
     private static final String KEY_SAVED_TIME = "saved_time";

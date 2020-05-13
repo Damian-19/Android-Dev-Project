@@ -331,7 +331,7 @@ public class TrainDB{
         private static final String DATABASE_NAME = "TrainDB.db";
         private static final String TIMETABLE_TABLE = "Trains";
         private static final String CUSTOM_JOURNEY_TABLE = "Journeys";
-        private static final int DATABASE_VERSION= 24;
+        private static final int DATABASE_VERSION= 25;
 
         // create database (collate nocase used to ignore case for queries)
         // create timetable table

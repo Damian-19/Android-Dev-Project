@@ -1,14 +1,7 @@
 package ie.ul.traintracker;
 
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.EditTextPreference;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceManager;
-import android.widget.CompoundButton;
-import android.widget.EditText;
-import android.widget.ToggleButton;
 
 @SuppressWarnings("deprecation")
 
