@@ -24,8 +24,6 @@ import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 
-import org.w3c.dom.Text;
-
 import java.util.Calendar;
 
 @SuppressWarnings("deprecation")
@@ -44,19 +42,7 @@ public class MainActivity extends Activity {
 
         SharedPreferences myPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 
-
-        boolean alarm = (PendingIntent.getBroadcast(this, 0, new Intent("ALARM"), PendingIntent.FLAG_NO_CREATE) == null);
-
-        if(alarm) {
-            Intent itAlarm = new Intent("ALARM");
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, itAlarm, 0);
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTimeInMillis(System.currentTimeMillis());
-            calendar.add(Calendar.SECOND, 3);
-            AlarmManager alarm1 = (AlarmManager) getSystemService(ALARM_SERVICE);
-            alarm1.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 60000, pendingIntent);
-        }
-
+        // implementing the AdMob API
         MobileAds.initialize(this, new OnInitializationCompleteListener() {
                     @Override
                     public void onInitializationComplete(InitializationStatus initializationStatus) {
@@ -64,7 +50,7 @@ public class MainActivity extends Activity {
                 });
         mAdView = findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
+        mAdView.loadAd(adRequest); // loads an ad
 
 
         checkTrains = findViewById(R.id.checkTrains);
@@ -102,7 +88,7 @@ public class MainActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_menu, menu);
+        getMenuInflater().inflate(R.menu.main_menu, menu); // generates menu
         return true;
     }
 
@@ -111,7 +97,7 @@ public class MainActivity extends Activity {
 
         switch (item.getItemId()) {
             case R.id.settings:
-                navigateToView(Settings.class);
+                navigateToView(Settings.class); // opens settings
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -119,7 +105,7 @@ public class MainActivity extends Activity {
     }
 
     //Replaces the need for separate intents in every button listener
-    public void navigateToView(Class viewName) {
+    public void navigateToView(Class viewName) { // starts new activity
         Intent intent = new Intent(getBaseContext(), viewName);
         startActivity(intent);
     }

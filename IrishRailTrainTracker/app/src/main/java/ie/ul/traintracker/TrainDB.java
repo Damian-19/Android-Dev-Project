@@ -56,9 +56,8 @@ public class TrainDB{
             this.addRowTimetable("Killarney", "Cork", "15/09/2020", "09:00");
             this.addRowTimetable("Westport", "Sligo", "18/11/2020", "15:00");
             this.addRowTimetable("Carlow", "Waterford", "15/02/2021", "17:00");
-            // populate custom journeys table (remove for final version)
         }
-        /*if (getAllCustom().length == 0) {
+        /*if (getAllCustom().length == 0) { // populate custom journeys table (remove for final version)
             this.addRowCustomJourney("Dublin", "Limerick", "10/05/2020", "10:00");
             this.addRowCustomJourney("Tralee", "Cork", "12/05/2020", "14:00");
         }*/
@@ -131,6 +130,7 @@ public class TrainDB{
         db.delete(ModuleDBOpenHelper.TIMETABLE_TABLE, where, whereArgs);
     }
 
+    // deletes the custom journey table and remakes it
     public void deleteAllCustom() {
         SQLiteDatabase db = moduleDBOpenHelper.getWritableDatabase();
             //db.delete(moduleDBOpenHelper.CUSTOM_JOURNEY_TABLE, null, null);
@@ -138,6 +138,7 @@ public class TrainDB{
             db.execSQL(ModuleDBOpenHelper.CUSTOM_JOURNEY_CREATE);
     }
 
+    // returns number of entries in table (not implemented)
     public long isTableCustomEmpty() {
         SQLiteDatabase db = moduleDBOpenHelper.getWritableDatabase();
         long count = DatabaseUtils.queryNumEntries(db, ModuleDBOpenHelper.CUSTOM_JOURNEY_TABLE);
@@ -148,7 +149,7 @@ public class TrainDB{
     * User specific database queries
      ****************************************/
 
-    public String[] getAllTimetable() {
+    public String[] getAllTimetable() { // returns whole timetable table
         ArrayList<String> outputArray = new ArrayList<String>();
         String[] result_columns = new String[]{
                 KEY_JOURNEY_START, KEY_JOURNEY_END, KEY_DEPARTURE_DATE, KEY_DEPARTURE_TIME};
@@ -177,7 +178,7 @@ public class TrainDB{
         return outputArray.toArray(new String[outputArray.size()]);
     }
 
-    public String[] getAllCustom() {
+    public String[] getAllCustom() { // returns whole custom journey table
         ArrayList<String> outputArray = new ArrayList<String>();
         String[] result_columns = new String[]{
                 KEY_CUSTOM_JOURNEY_START_LOCATION, KEY_CUSTOM_JOURNEY_END_LOCATION, KEY_CUSTOM_DEPARTURE_DATE, KEY_CUSTOM_DEPARTURE_TIME};
@@ -237,8 +238,7 @@ public class TrainDB{
 
     }
 
-    // not in use
-    public String[] getJourney(String journeyStartLocation, String journeyDepartureTime) {
+    public String[] getJourney(String journeyStartLocation, String journeyDepartureTime) { // performs start and end station search
         ArrayList<String> outputArray = new ArrayList<String>();
         String[] result_columns = new String[]{
                 KEY_DEPARTURE_TIME, KEY_JOURNEY_END, KEY_DEPARTURE_DATE, KEY_JOURNEY_START};
@@ -327,11 +327,15 @@ public class TrainDB{
         return outputArray.toArray(new String[outputArray.size()]);
     }
 
+    /****************************
+     * Database creation
+     ****************************/
+
     private static class ModuleDBOpenHelper extends SQLiteOpenHelper {
         private static final String DATABASE_NAME = "TrainDB.db";
-        private static final String TIMETABLE_TABLE = "Trains";
-        private static final String CUSTOM_JOURNEY_TABLE = "Journeys";
-        private static final int DATABASE_VERSION= 25;
+        private static final String TIMETABLE_TABLE = "Trains"; // timetable table
+        private static final String CUSTOM_JOURNEY_TABLE = "Journeys"; // custom journey table
+        private static final int DATABASE_VERSION= 25; // database version
 
         // create database (collate nocase used to ignore case for queries)
         // create timetable table
@@ -359,7 +363,7 @@ public class TrainDB{
 
         // called to create database when none exists
         @Override
-        public void onCreate(SQLiteDatabase db) {
+        public void onCreate(SQLiteDatabase db) { // create both tables
 
             db.execSQL(TIMETABLE_CREATE);
             db.execSQL(CUSTOM_JOURNEY_CREATE);
@@ -368,13 +372,12 @@ public class TrainDB{
         // called when database version does not match
         // version on disk updated to current version
         @Override
-        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) { // deletes tables if database version has incremented
             // log update
             Log.w("TaskDBAdapter", "Updated database to current version " +
                     oldVersion + " to " +
                     newVersion + ", which will destroy all old data");
 
-            // update to conform to new version
             db.execSQL("DROP TABLE IF EXISTS " + TIMETABLE_TABLE);
             db.execSQL("DROP TABLE IF EXISTS " + CUSTOM_JOURNEY_TABLE);
             onCreate(db);

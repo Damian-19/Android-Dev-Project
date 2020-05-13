@@ -18,9 +18,10 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        // sends the notification
         NotificationHelper notificationHelper = new NotificationHelper(context);
         NotificationCompat.Builder builder = notificationHelper.getChannelNotification();
         notificationHelper.getManager().notify(1, builder.build());
-        notificationHelper.cancelAlarm();
+        notificationHelper.cancelAlarm(); // cancels the notification once it is sent
     }
 }

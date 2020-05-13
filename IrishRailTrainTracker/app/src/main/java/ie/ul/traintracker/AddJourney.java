@@ -66,34 +66,34 @@ public class AddJourney extends Activity {
         addCustomStartLocation = findViewById(R.id.addCustomJourneyStartInput);
         addCustomEndLocation = findViewById(R.id.addCustomJourneyEndInput);
         tableView = findViewById(R.id.tableView);
-        tableView.setMovementMethod(new ScrollingMovementMethod());
+        tableView.setMovementMethod(new ScrollingMovementMethod()); // allow scrolling the textView
 
         final SharedPreferences myPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        updateFromPreferences(myPrefs);
+        updateFromPreferences(myPrefs); // check and update user name
 
 
         final Editor prefEditor = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
-        showFullTable();
-        if (tableView.getText().toString().isEmpty()) {
+        showFullTable(); // display all user made journeys
+        if (tableView.getText().toString().isEmpty()) { // check if user journey table is empty (by checking if the textView it populates is empty)
             tableView.setText("No journeys yet!");
         }
 
-        reminderSpinner = findViewById(R.id.reminderSpinner);
+        reminderSpinner = findViewById(R.id.reminderSpinner); // reminder spinner
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.reminderSpinnerArray, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         reminderSpinner.setAdapter(adapter);
-        if (myPrefs.contains("KEY_SPINNER_SELECTED")) {
-            savedPosition = myPrefs.getInt("KEY_SPINNER_SELECTED", 0);
-            reminderSpinner.setSelection(savedPosition);
+        if (myPrefs.contains("KEY_SPINNER_SELECTED")) { // check if spinner position has been saved
+            savedPosition = myPrefs.getInt("KEY_SPINNER_SELECTED", 0); // get position if was saved
+            reminderSpinner.setSelection(savedPosition); // set spinner to saved position
         }
         reminderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (timeFormatted == null || dateFormatted == null) {
-                    timeBefore = (int) parent.getItemIdAtPosition(position);
+                if (timeFormatted == null || dateFormatted == null) { // check time or date has not been set
+                    timeBefore = (int) parent.getItemIdAtPosition(position); //get id of spinner position
                 } else if (timeFormatted != null && dateFormatted != null){
-                    reminderSpinner.setSelection(0);
+                    reminderSpinner.setSelection(0); // reset spinner
                     Toast toast = Toast.makeText(getApplicationContext(), "You have already set a reminder. Selection not set", Toast.LENGTH_LONG);
                     toast.show();
                 }
@@ -112,8 +112,8 @@ public class AddJourney extends Activity {
         timePickerButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (timeFormatted == null && dateFormatted == null) {
-                    if (timeBefore == 0) {
+                if (timeFormatted == null && dateFormatted == null) { // check time and date have not been set
+                    if (timeBefore == 0) { // check if spinner has been selected
                         timeBefore = null;
                         timeSet = null;
                     } else if (timeBefore == 1) {
@@ -127,9 +127,9 @@ public class AddJourney extends Activity {
                     } else if (timeBefore == 5) {
                         timeSet = 60;
                     } else {
-                        timeSet = 30;
+                        timeSet = 30; // default selection just incase
                     }
-                    if (timeBefore != null || timeSet != null) {
+                    if (timeBefore != null || timeSet != null) { // check reminder spinner has been set
 
                         //time picker
                         final Calendar calendar = Calendar.getInstance();
@@ -147,21 +147,14 @@ public class AddJourney extends Activity {
                                         calendar.set(Calendar.MINUTE, minute);
                                         calendar.set(Calendar.SECOND, 0);
 
-
-
-                                        //if (timeSet != null) {
                                             timePickerButton.setText("Alarm Set: " + dayOfMonth + "/" + month + "/" + year + " @ " + addLeadingZero(hourOfDay) + ":" + addLeadingZero(minute));
                                             int time = (minute * 60 + (hourOfDay - 1) * 60 * 60) * 1000;
                                             SimpleDateFormat format = new SimpleDateFormat("HH:mm");
-                                            timeFormatted = format.format(time);
-                                            prefEditor.putString("KEY_FORMATTED_TIME", timeFormatted);
+                                            timeFormatted = format.format(time); // format time for database
+                                            prefEditor.putString("KEY_FORMATTED_TIME", timeFormatted); // saved selected time
                                             prefEditor.apply();
 
-                                            startAlarm(calendar);
-                                        /*} else {
-                                            Toast toast = Toast.makeText(getApplicationContext(), "Please select how far in advance you would like your reminder", Toast.LENGTH_LONG);
-                                            toast.show();
-                                        }*/
+                                            startAlarm(calendar); // start alarm manager
                                     }
                                 }, hour, minute, true);
                         timePickerDialog.show();
@@ -177,8 +170,8 @@ public class AddJourney extends Activity {
                                         calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                                         int date = (dayOfMonth + month + year);
                                         SimpleDateFormat format = new SimpleDateFormat("DD/MM/YYYY");
-                                        dateFormatted = dayOfMonth + "/" + month + "/" + year;
-                                        prefEditor.putString("KEY_FORMATTED_DATE", dateFormatted);
+                                        dateFormatted = dayOfMonth + "/" + month + "/" + year; // format date for database
+                                        prefEditor.putString("KEY_FORMATTED_DATE", dateFormatted); // saved selected date
                                         prefEditor.apply();
                                     }
                                 }, year, month, dayOfMonth);
@@ -200,7 +193,7 @@ public class AddJourney extends Activity {
 
 
 
-        addCustomJourney = findViewById(R.id.addCustomJourneyButton);
+        addCustomJourney = findViewById(R.id.addCustomJourneyButton); // button to add your journey
         addCustomJourney.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -229,7 +222,7 @@ public class AddJourney extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.custom_menu, menu);
+        getMenuInflater().inflate(R.menu.custom_menu, menu); // create menu
         return true;
     }
 
@@ -237,7 +230,7 @@ public class AddJourney extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
-            case R.id.cancel_alarm:
+            case R.id.cancel_alarm: // cancel alarm menu option
                 cancelAlarm();
                 reminderSpinner.setSelection(0);
                 Editor prefEditor = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
@@ -245,16 +238,16 @@ public class AddJourney extends Activity {
                 prefEditor.apply();
                 return true;
 
-            case R.id.remove_all_custom:
+            case R.id.remove_all_custom: // delete table menu option
                 deleteAll();
                 showFullTable();
                 return true;
 
-            case R.id.settings:
+            case R.id.settings: // open settings page
                 navigateToView(Settings.class);
                 return true;
 
-            case R.id.help:
+            case R.id.help: // open help page
                 navigateToView(Help.class);
                 return true;
             default:
@@ -262,12 +255,12 @@ public class AddJourney extends Activity {
         }
     }
 
-    private void checkAlarmSet() {
+    private void checkAlarmSet() { // check if an alarm has been set
         final SharedPreferences myPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        if (myPrefs.contains("KEY_FORMATTED_TIME") && myPrefs.contains("KEY_FORMATTED_DATE")) {
+        if (myPrefs.contains("KEY_FORMATTED_TIME") && myPrefs.contains("KEY_FORMATTED_DATE")) { // check if time and date has been saved
             String time = myPrefs.getString("KEY_FORMATTED_TIME", "TIME_ERROR");
             String date = myPrefs.getString("KEY_FORMATTED_DATE", "DATE_ERROR");
-            timePickerButton.setText("Alarm Set: " + date + " @ " + time);
+            timePickerButton.setText("Alarm Set: " + date + " @ " + time); // set time & date button to saved values
             isAlarmSet = 1;
             Toast toast = Toast.makeText(getApplicationContext(), "You already have an alarm set", Toast.LENGTH_SHORT);
             toast.show();
@@ -281,8 +274,8 @@ public class AddJourney extends Activity {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
         Editor prefEditor = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
 
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, (calendar.getTimeInMillis() - timeSet * 60 * 1000), pendingIntent);
-        prefEditor.putInt("KEY_SPINNER_SELECTED", timeBefore);
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, (calendar.getTimeInMillis() - timeSet * 60 * 1000), pendingIntent); // schedules intent to fire notification
+        prefEditor.putInt("KEY_SPINNER_SELECTED", timeBefore); // saves the spinner position
         prefEditor.apply();
     }
 
@@ -292,14 +285,14 @@ public class AddJourney extends Activity {
         Intent intent = new Intent(this, AlarmReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
 
-        alarmManager.cancel(pendingIntent);
+        alarmManager.cancel(pendingIntent); // cancel alarm intent
         Editor prefEditor = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
         dateFormatted = null;
-        prefEditor.remove("KEY_FORMATTED_DATE");
+        prefEditor.remove("KEY_FORMATTED_DATE"); // clear saved date
         timeFormatted = null;
-        prefEditor.remove("KEY_FORMATTED_TIME");
+        prefEditor.remove("KEY_FORMATTED_TIME"); // clear saved time
         prefEditor.apply();
-        timePickerButton.setText("Set Departure Date & Time");
+        timePickerButton.setText("Set Departure Date & Time"); // reset button
     }
 
     // Checks if a name is saved in the sharedPreferences and updates the variable TITLE_ID
@@ -342,6 +335,7 @@ public class AddJourney extends Activity {
         trainDB.addRowCustomJourney(journeyStart, journeyEnd, dateFormatted,  timeFormatted);
     }
 
+    // deletes the custom journeys table
     private void deleteAll() {
         trainDB.deleteAllCustom();
     }

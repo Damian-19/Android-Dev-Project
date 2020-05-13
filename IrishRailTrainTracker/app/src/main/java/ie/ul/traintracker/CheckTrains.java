@@ -38,7 +38,7 @@ public class CheckTrains extends Activity {
         showFullTimetable = findViewById(R.id.showFullDatabase);
 
         final SharedPreferences myPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        if (myPrefs.contains("KEY_START_STATION_SEARCH") && myPrefs.contains("KEY_END_STATION_SEARCH")) {
+        if (myPrefs.contains("KEY_START_STATION_SEARCH") && myPrefs.contains("KEY_END_STATION_SEARCH")) { // check if search has been saved
             readInput();
         }
 
@@ -47,10 +47,10 @@ public class CheckTrains extends Activity {
             @Override
             public void onClick(View v) {
                 if (isStartSearchSet()) {
-                    showStartStationSearch(chosenStartStationField.getText().toString(), chosenDepartureStation.getText().toString());
-                    saveInput();
+                    showStartStationSearch(chosenStartStationField.getText().toString(), chosenDepartureStation.getText().toString()); // calls search function
+                    saveInput(); // saves search
                 }
-                if (dbView.getText().toString().isEmpty()) {
+                if (dbView.getText().toString().isEmpty()) { // returns if no results for search
                     Toast toast = Toast.makeText(getApplicationContext(), "No journeys found", Toast.LENGTH_SHORT);
                     toast.show();
                 }
@@ -64,7 +64,7 @@ public class CheckTrains extends Activity {
             }
         });
 
-        showFullTimetable.setOnClickListener(new OnClickListener() {
+        showFullTimetable.setOnClickListener(new OnClickListener() { // display full table on button tap
             @Override
             public void onClick(View v) {
                 showFullTable();
@@ -86,14 +86,14 @@ public class CheckTrains extends Activity {
         print(trainDB.getAllTimetable());
     }
 
-    private void saveInput() {
+    private void saveInput() { // saves search
         final Editor prefEditor = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
         prefEditor.putString("KEY_START_STATION_SEARCH", chosenStartStationField.getText().toString());
         prefEditor.putString("KEY_END_STATION_SEARCH", chosenDepartureStation.getText().toString());
         prefEditor.apply();
     }
 
-    private void readInput() {
+    private void readInput() { // loads last search
         final SharedPreferences myPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         savedStartStation = myPrefs.getString("KEY_START_STATION_SEARCH", "START_ERROR");
         savedEndStation = myPrefs.getString("KEY_END_STATION_SEARCH", "END_ERROR");
@@ -102,10 +102,10 @@ public class CheckTrains extends Activity {
     }
 
     private void showStartStationSearch(String journeyStartLocation, String journeyDepartureTime) {
-        print(trainDB.getJourney(journeyStartLocation, journeyDepartureTime));
+        print(trainDB.getJourney(journeyStartLocation, journeyDepartureTime)); // calls DB search function
     }
 
-    private boolean isStartSearchSet() {
+    private boolean isStartSearchSet() { // check if start and end stations are populated
         if (chosenStartStationField.getText().toString().contentEquals("") ||
                 chosenDepartureStation.getText().toString().contentEquals("")) {
             Toast toast = Toast.makeText(getApplicationContext(),"Please enter start and end stations.",Toast.LENGTH_SHORT);

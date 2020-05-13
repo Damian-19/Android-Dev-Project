@@ -29,13 +29,13 @@ public class NotificationHelper extends ContextWrapper {
 
     public NotificationHelper(Context base) {
         super(base);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) { // checks if API level is high enough to need a notification channel
             createChannel();
         }
     }
 
     @TargetApi(Build.VERSION_CODES.O)
-    private void createChannel() {
+    private void createChannel() { // makes a notification channel (required for new API levels)
         NotificationChannel channel = new NotificationChannel(channelID, channelName, NotificationManager.IMPORTANCE_HIGH);
 
         getManager().createNotificationChannel(channel);
@@ -51,17 +51,19 @@ public class NotificationHelper extends ContextWrapper {
 
 
 
+    // build notification
     public NotificationCompat.Builder getChannelNotification() {
         Intent intent = new Intent(this, AddJourney.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
         final SharedPreferences myPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        if (myPrefs.contains("KEY_NAME")) {
+        if (myPrefs.contains("KEY_NAME")) { // check if name is saved
             TITLE_ID = myPrefs.getString("KEY_NAME", "NAME_ERROR") + ", Your Journey Reminder";
         } else {
             TITLE_ID = "Your Journey Reminder";
         }
 
+        // build notification
         return new NotificationCompat.Builder(getApplicationContext(), channelID)
                 .setContentTitle(TITLE_ID)
                 .setContentText(CONTENT_ID)
@@ -79,8 +81,8 @@ public class NotificationHelper extends ContextWrapper {
 
         alarmManager.cancel(pendingIntent);
         SharedPreferences.Editor prefEditor = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
-        prefEditor.remove("KEY_FORMATTED_DATE");
-        prefEditor.remove("KEY_FORMATTED_TIME");
+        prefEditor.remove("KEY_FORMATTED_DATE"); // clear saved date
+        prefEditor.remove("KEY_FORMATTED_TIME"); // clear saved time
         prefEditor.apply();
     }
 }
