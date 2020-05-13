@@ -3,9 +3,11 @@ package ie.ul.traintracker;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
@@ -42,7 +44,7 @@ public class TrainDB{
                 ModuleDBOpenHelper.DATABASE_VERSION);
 
         //populate database
-        if (getAllTimetable().length == 0 || getAllCustom().length == 0) {
+        if (getAllTimetable().length == 0) {
             // populate timetable table
             this.addRowTimetable("Tralee", "Cork", "20/05/2020", "11:00");
             this.addRowTimetable("Dublin", "Limerick", "28/05/2020", "15:00");
@@ -55,9 +57,11 @@ public class TrainDB{
             this.addRowTimetable("Westport", "Sligo", "18/11/2020", "15:00");
             this.addRowTimetable("Carlow", "Waterford", "15/02/2021", "17:00");
             // populate custom journeys table (remove for final version)
+        }
+        /*if (getAllCustom().length == 0) {
             this.addRowCustomJourney("Dublin", "Limerick", "10/05/2020", "10:00");
             this.addRowCustomJourney("Tralee", "Cork", "12/05/2020", "14:00");
-        }
+        }*/
     }
 
     /***************************
@@ -129,8 +133,15 @@ public class TrainDB{
 
     public void deleteAllCustom() {
         SQLiteDatabase db = moduleDBOpenHelper.getWritableDatabase();
-        db.execSQL("DROP TABLE IF EXISTS " + ModuleDBOpenHelper.CUSTOM_JOURNEY_TABLE);
-        db.execSQL(ModuleDBOpenHelper.CUSTOM_JOURNEY_CREATE);
+            //db.delete(moduleDBOpenHelper.CUSTOM_JOURNEY_TABLE, null, null);
+            db.execSQL("DROP TABLE IF EXISTS " + ModuleDBOpenHelper.CUSTOM_JOURNEY_TABLE);
+            db.execSQL(ModuleDBOpenHelper.CUSTOM_JOURNEY_CREATE);
+    }
+
+    public long isTableCustomEmpty() {
+        SQLiteDatabase db = moduleDBOpenHelper.getWritableDatabase();
+        long count = DatabaseUtils.queryNumEntries(db, ModuleDBOpenHelper.CUSTOM_JOURNEY_TABLE);
+        return count;
     }
 
     /****************************************
@@ -320,7 +331,7 @@ public class TrainDB{
         private static final String DATABASE_NAME = "TrainDB.db";
         private static final String TIMETABLE_TABLE = "Trains";
         private static final String CUSTOM_JOURNEY_TABLE = "Journeys";
-        private static final int DATABASE_VERSION= 19;
+        private static final int DATABASE_VERSION= 24;
 
         // create database (collate nocase used to ignore case for queries)
         // create timetable table

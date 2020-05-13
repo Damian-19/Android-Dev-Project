@@ -7,14 +7,17 @@ import android.widget.TextView;
 
 public class Help extends Activity {
 
-    TextView howAddJourneyHeading, howAddJourneyContent;
+    TextView addJourneyHeading, addJourneyContent, addJourneyHeading1, addJourneyContent1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_help_relative);
 
-        howAddJourneyHeading = findViewById(R.id.howAddJourneyHeading);
-        howAddJourneyContent = findViewById(R.id.howAddJourneyContent);
+        addJourneyHeading = findViewById(R.id.AddJourneyHeading);
+        addJourneyContent = findViewById(R.id.AddJourneyContent);
+        addJourneyHeading1 = findViewById(R.id.AddJourneyHeading1);
+        addJourneyContent1 = findViewById(R.id.AddJourneyContent1);
+
     }
 }

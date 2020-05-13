@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Irish Rail Train Tracker</string>
+    <string name="app_name">Train Tracker</string>
     <string name="add_page">Add Page</string>
     <string name="logo">Logo</string>
     <string name="check_trains">Check Trains</string>
@@ -18,6 +18,8 @@
     <string name="search">Search</string>
     <string name="find_journey_end">"End Station: "</string>
     <string name="add_journey">Add Journey</string>
+    <string name="to_add_a_custom_journey">To add a custom journey, you must first enter the station your journey starts from, and the station your journey ends at. You must then select the date and time your train departs the start station. Finally, use the Add Journey button to save your journey.</string>
+    <string name="to_add_a_custom_time_and_date"><![CDATA[When you tap the \'Set Departure Date & Time\' button, you can select the date and time your train departs. Before doing this however, you must select how far before the time you select you want the reminder to appear. You can remove a previous reminder using the menu. Your reminder will be automatically removed once you receive it.]]></string>
     <string-array name="reminderSpinnerArray">
         <item>Add Notification</item>
         <item>10 mins before</item>

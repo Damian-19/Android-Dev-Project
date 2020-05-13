@@ -16,6 +16,7 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
@@ -57,6 +58,7 @@ public class CheckTrains extends Activity {
         setContentView(R.layout.activity_check_trains_relative);
 
         dbView = findViewById(R.id.dbcontent);
+        dbView.setMovementMethod(new ScrollingMovementMethod());
         trainDB = new TrainDB(getApplicationContext());
         searchStartButton = findViewById(R.id.findStartStationsButton);
         chosenStartStationField = findViewById(R.id.chosenStartStation);

@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.ads.AdRequest;
@@ -33,6 +34,7 @@ public class MainActivity extends Activity {
 
     Button checkTrains, addJourney;
     TextView welcomeText;
+    ImageView mapImage;
     OnSharedPreferenceChangeListener prefListener;
 
     @Override
@@ -68,6 +70,7 @@ public class MainActivity extends Activity {
         checkTrains = findViewById(R.id.checkTrains);
         addJourney = findViewById(R.id.addJourney);
         welcomeText = findViewById(R.id.welcome_text);
+        mapImage = findViewById(R.id.imageView3);
         updateFromPreferences(myPrefs);
 
         checkTrains.setOnClickListener(new View.OnClickListener() {

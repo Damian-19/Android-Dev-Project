@@ -75,8 +75,8 @@ public class AddJourney extends Activity {
     private Integer timeBefore = null;
     private Integer timeSet = null;
     Integer savedPosition;
-    public static String timeFormatted;
-    String dateFormatted;
+    public String timeFormatted;
+    public String dateFormatted;
 
     TrainDB trainDB;
 
@@ -88,7 +88,6 @@ public class AddJourney extends Activity {
         trainDB = new TrainDB(getApplicationContext());
         addCustomStartLocation = findViewById(R.id.addCustomJourneyStartInput);
         addCustomEndLocation = findViewById(R.id.addCustomJourneyEndInput);
-        notificationButton = findViewById(R.id.notification_button);
         tableView = findViewById(R.id.tableView);
 
         final SharedPreferences myPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
@@ -97,6 +96,9 @@ public class AddJourney extends Activity {
 
         final Editor prefEditor = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
         showFullTable();
+        if (tableView.getText().toString().isEmpty()) {
+            tableView.setText("No journeys yet!");
+        }
 
         reminderSpinner = findViewById(R.id.reminderSpinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
@@ -136,8 +138,6 @@ public class AddJourney extends Activity {
                     if (timeBefore == 0) {
                         timeBefore = null;
                         timeSet = null;
-                        Toast toast = Toast.makeText(getBaseContext(), "Please select an option", Toast.LENGTH_SHORT);
-                        toast.show();
                     } else if (timeBefore == 1) {
                         timeSet = 10;
                     } else if (timeBefore == 2) {
@@ -171,7 +171,7 @@ public class AddJourney extends Activity {
 
 
 
-                                        if (timeSet != null) {
+                                        //if (timeSet != null) {
                                             timePickerButton.setText("Alarm Set: " + dayOfMonth + "/" + month + "/" + year + " @ " + addLeadingZero(hourOfDay) + ":" + addLeadingZero(minute));
                                             int time = (minute * 60 + (hourOfDay - 1) * 60 * 60) * 1000;
                                             SimpleDateFormat format = new SimpleDateFormat("HH:mm");
@@ -180,10 +180,10 @@ public class AddJourney extends Activity {
                                             prefEditor.apply();
 
                                             startAlarm(calendar);
-                                        } else {
-                                            Toast toast = Toast.makeText(getApplicationContext(), "Please select an option", Toast.LENGTH_SHORT);
+                                        /*} else {
+                                            Toast toast = Toast.makeText(getApplicationContext(), "Please select how far in advance you would like your reminder", Toast.LENGTH_LONG);
                                             toast.show();
-                                        }
+                                        }*/
                                     }
                                 }, hour, minute, true);
                         timePickerDialog.show();
@@ -206,7 +206,7 @@ public class AddJourney extends Activity {
                                 }, year, month, dayOfMonth);
                         datePickerDialog.show();
                     } else if (timeBefore == null || timeSet == null) {
-                        Toast toast = Toast.makeText(getApplicationContext(), "Please select an option", Toast.LENGTH_LONG);
+                        Toast toast = Toast.makeText(getApplicationContext(), "Please select how far in advance you would like your reminder", Toast.LENGTH_LONG);
                         toast.show();
                     }
             } else {
@@ -242,13 +242,6 @@ public class AddJourney extends Activity {
 
         });
 
-        notificationButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendNotification();
-            }
-        });
-
     }
 
 
@@ -268,11 +261,16 @@ public class AddJourney extends Activity {
         switch (item.getItemId()) {
             case R.id.cancel_alarm:
                 cancelAlarm();
+                reminderSpinner.setSelection(0);
+                Editor prefEditor = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
+                prefEditor.putInt("KEY_SPINNER_SELECTED", 0);
+                prefEditor.apply();
                 return true;
 
-            /*case R.id.remove_all_custom:
+            case R.id.remove_all_custom:
                 deleteAll();
-                return true;*/
+                showFullTable();
+                return true;
 
             case R.id.settings:
                 navigateToView(Settings.class);
@@ -334,42 +332,6 @@ public class AddJourney extends Activity {
         } else {
             TITLE_ID = ("Journey Reminder");
         }
-    }
-
-    // creates the notification channel for newer versions of Android (TESTING ONLY)
-    private void createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = getString(R.string.channel_name);
-            String description = getString(R.string.channel_description);
-            int importance = NotificationManager.IMPORTANCE_HIGH;
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
-            channel.setDescription(description);
-
-            //Register channel with system
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
-    }
-
-    // builds & sends notification (TESTING ONLY)
-    public void sendNotification() {
-
-        Intent intent = new Intent(this, CheckTrains.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
-
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.drawable.logo)
-                .setContentTitle(TITLE_ID)
-                .setContentText(CONTENT_ID)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setContentIntent(pendingIntent)
-                .setCategory(NotificationCompat.CATEGORY_REMINDER)
-                .setAutoCancel(true);
-
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-        notificationManager.notify(1, builder.build());
     }
 
     private void print(String[] content) {
